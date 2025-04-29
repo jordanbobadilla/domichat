@@ -1,0 +1,31 @@
+# Node
+node_modules/
+.env
+dist/
+build/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Expo
+.expo/
+.expo-shared/
+
+# IDEs
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Others
+.env.local
+.env.production
