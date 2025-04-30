@@ -9,17 +9,17 @@ export async function verificarSuscripcion(
   const usuario = (req as any).usuario
 
   if (!usuario?.id) {
-    return res.status(401).json({ error: "No autenticado" })
+    res.status(401).json({ error: "No autenticado" })
+    return
   }
 
   const activo = await verificarSuscripcionActiva(usuario.id)
 
   if (!activo) {
-    return res
-      .status(403)
-      .json({
-        error: "Requiere suscripción activa para acceder a esta función.",
-      })
+    res.status(403).json({
+      error: "Requiere suscripción activa para acceder a esta función.",
+    })
+    return
   }
 
   next()

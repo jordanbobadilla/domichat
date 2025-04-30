@@ -10,6 +10,7 @@ export function autenticarToken(
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({ mensaje: "No autorizado" })
+    return
   }
 
   const token = authHeader?.split(" ")[1]
