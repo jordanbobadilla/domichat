@@ -1,11 +1,12 @@
 import { Router } from "express"
 import { obtenerRespuestaIA } from "../services/ai_model"
-import { autenticarToken } from "../middleware/authMidleware"
+import { autenticarToken } from "../middleware/authMiddleware"
+import { verificarSuscripcion } from "../middleware/verificarSuscripcion"
 
 const router = Router()
 
 // Ruta protegida: solo usuarios autenticados pueden usarla
-router.post("/", autenticarToken, async (req, res) => {
+router.post("/", autenticarToken, verificarSuscripcion, async (req, res) => {
   const { mensaje } = req.body
 
   if (!mensaje || mensaje.trim() === "") {

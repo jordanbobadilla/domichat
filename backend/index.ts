@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import authRoutes from "./api/auth.routes"
 import chatRoutes from "./api/chat.routes"
 // import userRoutes from "./api/user.routes"
-// import subscriptionRoutes from "./api/subscription.routes"
+import subscriptionRoutes from "./api/subscription.routes"
 
 // Inicializar configuración
 dotenv.config()
@@ -20,7 +20,7 @@ app.use(express.json())
 app.use("/api/auth", authRoutes)
 app.use("/api/chat", chatRoutes)
 // app.use("/api/user", userRoutes)
-// app.use("/api/subscription", subscriptionRoutes)
+app.use("/api/subscription", subscriptionRoutes)
 
 // Ruta de prueba
 app.get("/", (_req, res) => {
@@ -31,5 +31,3 @@ app.get("/", (_req, res) => {
 app.listen(PORT, () => {
   console.log(`🟢 Servidor corriendo en http://localhost:${PORT}`)
 })
-
-console.log("Clave OpenAI:", process.env.OPENAI_API_KEY)
