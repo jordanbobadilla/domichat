@@ -1,51 +1,93 @@
 import React, { useState } from "react"
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native"
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native"
 import { login } from "../services/api"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [cargando, setCargando] = useState(false)
 
   const iniciarSesion = async () => {
+    if (!email || !password) return Alert.alert("Completa ambos campos")
+
     try {
+      setCargando(true)
+
       const res = await login(email, password)
-      console.log("Token:", res.token)
-      navigation.navigate("Chat", {
+
+      // Guardar token y nombre localmente
+      await AsyncStorage.setItem("token", res.token)
+      await AsyncStorage.setItem("nombre", res.usuario.nombre)
+
+      // Redirigir al chat (sin poder volver atrás)
+      navigation.replace("Chat", {
         token: res.token,
         nombre: res.usuario.nombre,
       })
     } catch (err: any) {
-      Alert.alert("Error", err.message)
+      Alert.alert("Error al iniciar sesión", err.message)
+    } finally {
+      setCargando(false)
     }
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Iniciar sesión en DomiChat</Text>
-      <TextInput
-        placeholder="Correo"
-        style={styles.input}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        placeholder="Contraseña"
-        style={styles.input}
-        secureTextEntry
-        onChangeText={setPassword}
-      />
-      <Button title="Entrar" onPress={iniciarSesion} />
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={{ flex: 1 }}
+    >
+      <View style={styles.container}>
+        <Text style={styles.titulo}>Bienvenido a DomiChat 🇩🇴</Text>
+
+        <TextInput
+          placeholder="Correo electrónico"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <TextInput
+          placeholder="Contraseña"
+          style={styles.input}
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+
+        <Button
+          title={cargando ? "Entrando..." : "Iniciar sesión"}
+          onPress={iniciarSesion}
+        />
+      </View>
+    </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", padding: 20 },
+  titulo: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 30,
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    marginVertical: 10,
-    padding: 10,
     borderRadius: 6,
+    padding: 12,
+    marginBottom: 15,
   },
-  title: { fontSize: 24, marginBottom: 20, textAlign: "center" },
 })

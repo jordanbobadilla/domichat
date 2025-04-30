@@ -9,11 +9,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  TouchableOpacity,
 } from "react-native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { getHistorial } from "../services/api"
+
 import config from "../constants/config"
 
-export default function ChatScreen({ route }: any) {
+export default function ChatScreen({ route, navigation }: any) {
   const { token, nombre } = route.params
   const [mensaje, setMensaje] = useState("")
   const [historial, setHistorial] = useState<
@@ -68,13 +71,25 @@ export default function ChatScreen({ route }: any) {
     }
   }
 
+  const cerrarSesion = async () => {
+    await AsyncStorage.removeItem("token")
+    await AsyncStorage.removeItem("nombre")
+    setHistorial([])
+    navigation.replace("Login")
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1 }}
     >
       <View style={styles.container}>
-        <Text style={styles.titulo}>Hola, {nombre} 👋</Text>
+        <View style={styles.encabezado}>
+          <Text style={styles.titulo}>Hola, {nombre} 👋</Text>
+          <TouchableOpacity onPress={cerrarSesion}>
+            <Text style={styles.cerrar}>Cerrar sesión</Text>
+          </TouchableOpacity>
+        </View>
 
         <ScrollView style={styles.chat}>
           {historial.map((c, i) => (
@@ -114,4 +129,14 @@ const styles = StyleSheet.create({
   },
   mensaje: { fontWeight: "600" },
   respuesta: { color: "#444", marginTop: 2 },
+  encabezado: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  cerrar: {
+    color: "red",
+    fontWeight: "600",
+  },
 })
