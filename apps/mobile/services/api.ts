@@ -12,3 +12,15 @@ export async function login(email: string, password: string) {
   if (!res.ok) throw new Error("Login fallido")
   return await res.json()
 }
+
+export async function getHistorial(token: string) {
+  const res = await fetch(`${BASE_URL}/chat/historial`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!res.ok) throw new Error("Error al obtener historial")
+  return await res.json() // contiene { historial: [...] }
+}
