@@ -22,20 +22,6 @@ router.post("/login", (req, res) => {
   res.json({ token, usuario: { id: usuario?.id, nombre: usuario?.nombre } })
 })
 
-// router.post("/login", (req, res) => {
-//   const { email, password } = req.body
-//   const usuario = usuariosDummy.find(
-//     (u) => u.email === email && u.password === password
-//   )
-
-//   if (!usuario) {
-//     return res.status(401).json({ mensaje: "Credenciales inválidas" })
-//   }
-
-//   const token = generarToken({ id: usuario.id, email: usuario.email })
-//   res.json({ token, usuario: { id: usuario.id, nombre: usuario.nombre } })
-// })
-
 router.post("/registro", (req, res) => {
   // Aquí agregarías lógica real de registro
   res.json({ mensaje: "Registro simulado exitoso" })
