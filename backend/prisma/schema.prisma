@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id             String       @id @default(uuid())
+  email          String    @unique
+  password       String
+  nombre         String
+  suscripcion    Suscripcion?
+  chats          Chat[]
+  creadoEn       DateTime  @default(now())
+}
+
+model Suscripcion {
+  id             Int      @id @default(autoincrement())
+  usuario        Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId      String      @unique
+  activa         Boolean
+  expiracion     DateTime
+}
+
+model Chat {
+  id             Int      @id @default(autoincrement())
+  usuario        Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId      String
+  mensaje        String
+  respuesta      String
+  creadoEn       DateTime @default(now())
+}
