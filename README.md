@@ -8,7 +8,7 @@
 - 🏛️ Asistir en servicios ciudadanos dominicanos
 - 📚 Apoyar en la educación de estudiantes de RD
 - ⚙️ Asistir a trabajadores técnicos, artísticos y más
-- 💳 Funciona por suscripción mediante [Portal DOM](https://portal.do)
+- 💳 Funciona por suscripción mediante [Portal DOM](https://portaldom.do)
 
 ---
 
