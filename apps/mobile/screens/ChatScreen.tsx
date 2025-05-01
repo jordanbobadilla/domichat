@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native"
-import { getHistorial } from "../services/api"
+import { BASE_URL, getHistorial } from "../services/api"
 import { colors } from "../constants/colors"
 import { Ionicons } from "@expo/vector-icons"
 
@@ -47,7 +47,7 @@ export default function ChatScreen({ route }: any) {
     try {
       setCargando(true)
 
-      const res = await fetch(`http://192.168.X.X:4000/api/chat`, {
+      const res = await fetch(`${BASE_URL}/chat`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -55,6 +55,11 @@ export default function ChatScreen({ route }: any) {
         },
         body: JSON.stringify({ mensaje }),
       })
+
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || "Error en el servidor")
+      }
 
       const data = await res.json()
 
