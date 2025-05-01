@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { View, Text, StyleSheet, Button, ActivityIndicator } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { confirmarSuscripcion, getEstadoSuscripcion } from "../services/api"
+import { Alert } from "react-native"
 
 export default function PerfilScreen({ route, navigation }: any) {
   const { nombre } = route.params
@@ -35,18 +36,33 @@ export default function PerfilScreen({ route, navigation }: any) {
   }
 
   const activarSuscripcion = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token")
-      if (!token) throw new Error("Sesión no encontrada")
+    Alert.alert(
+      "Confirmar activación",
+      "¿Deseas activar tu suscripción premium por 1 mes?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Activar",
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem("token")
+              if (!token) throw new Error("Sesión no encontrada")
 
-      await confirmarSuscripcion(token)
+              await confirmarSuscripcion(token)
 
-      // Volver a consultar el estado actualizado
-      const estado = await getEstadoSuscripcion(token)
-      setSuscripcion(estado)
-    } catch (err: any) {
-      console.error("Error al activar suscripción:", err.message)
-    }
+              const estado = await getEstadoSuscripcion(token)
+              setSuscripcion(estado)
+            } catch (err: any) {
+              console.error("Error al activar suscripción:", err.message)
+              Alert.alert("Error", err.message)
+            }
+          },
+        },
+      ]
+    )
   }
 
   return (
