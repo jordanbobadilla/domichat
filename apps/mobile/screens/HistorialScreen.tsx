@@ -7,8 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native"
 import { getHistorial } from "../services/api"
-import { useNavigation } from "@react-navigation/native"
-import { TouchableOpacity } from "react-native"
+import { colors } from "../constants/colors"
 
 export default function HistorialScreen({ route }: any) {
   const { token } = route.params
@@ -16,7 +15,6 @@ export default function HistorialScreen({ route }: any) {
     { mensaje: string; respuesta: string; creadoEn: string }[]
   >([])
   const [cargando, setCargando] = useState(true)
-  const navigation = useNavigation<any>()
 
   useEffect(() => {
     async function cargarHistorial() {
@@ -36,8 +34,10 @@ export default function HistorialScreen({ route }: any) {
   if (cargando) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#333" />
-        <Text style={{ marginTop: 10 }}>Cargando historial...</Text>
+        <ActivityIndicator size="large" color={colors.primario} />
+        <Text style={{ marginTop: 10, color: colors.texto }}>
+          Cargando historial...
+        </Text>
       </View>
     )
   }
@@ -45,7 +45,9 @@ export default function HistorialScreen({ route }: any) {
   if (historial.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text>No tienes conversaciones guardadas aún.</Text>
+        <Text style={{ color: colors.texto }}>
+          No tienes conversaciones guardadas aún.
+        </Text>
       </View>
     )
   }
@@ -53,37 +55,62 @@ export default function HistorialScreen({ route }: any) {
   return (
     <ScrollView style={styles.container}>
       {historial.map((item, i) => (
-        <TouchableOpacity
-          key={i}
-          style={styles.card}
-          onPress={() =>
-            navigation.navigate("Chat", {
-              mensajePrevio: item.mensaje,
-              respuestaPrevio: item.respuesta,
-            })
-          }
-        >
+        <View key={i} style={styles.card}>
           <Text style={styles.fecha}>
             {new Date(item.creadoEn).toLocaleString()}
           </Text>
-          <Text style={styles.mensaje}>🧑 Tú: {item.mensaje}</Text>
-          <Text style={styles.respuesta}>🤖 DomiChat: {item.respuesta}</Text>
-        </TouchableOpacity>
+          <Text style={styles.usuario}>🧑 Tú:</Text>
+          <Text style={styles.mensaje}>{item.mensaje}</Text>
+          <Text style={styles.bot}>🤖 DomiChat:</Text>
+          <Text style={styles.respuesta}>{item.respuesta}</Text>
+        </View>
       ))}
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20 },
-  card: {
-    backgroundColor: "#f3f3f3",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
+  container: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 64,
+    backgroundColor: colors.fondo,
   },
-  mensaje: { fontWeight: "600", marginBottom: 5 },
-  respuesta: { color: "#444" },
-  fecha: { fontSize: 12, color: "#888", marginBottom: 8 },
-  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+  card: {
+    backgroundColor: "#fff",
+    padding: 14,
+    borderRadius: 10,
+    marginBottom: 16,
+    borderColor: colors.borde,
+    borderWidth: 1,
+  },
+  usuario: {
+    fontWeight: "600",
+    color: colors.primario,
+    marginTop: 5,
+  },
+  bot: {
+    fontWeight: "600",
+    color: colors.texto,
+    marginTop: 8,
+  },
+  mensaje: {
+    color: colors.texto,
+    marginBottom: 4,
+  },
+  respuesta: {
+    color: "#444",
+    marginBottom: 2,
+  },
+  fecha: {
+    fontSize: 12,
+    color: "#888",
+    marginBottom: 4,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.fondo,
+  },
 })
