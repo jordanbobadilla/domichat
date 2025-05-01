@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import axios from "axios"
 import { colors } from "../constants/colors"
+import { verificarSesion } from "../services/auth"
 
 interface Mensaje {
   mensaje: string
@@ -17,19 +18,15 @@ export default function Chat() {
   const chatRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const t = localStorage.getItem("token")
-    const n = localStorage.getItem("nombre")
-    if (!t || !n) {
-      window.location.href = "/login"
-      return
-    }
+    const sesion = verificarSesion()
+    if (!sesion) return
 
-    setToken(t)
-    setNombre(n)
+    setToken(sesion.token)
+    setNombre(sesion.nombre)
 
     axios
       .get("http://localhost:4000/api/chat/historial", {
-        headers: { Authorization: `Bearer ${t}` },
+        headers: { Authorization: `Bearer ${sesion.token}` },
       })
       .then((res) => setHistorial(res.data.historial))
       .catch(() => {})
