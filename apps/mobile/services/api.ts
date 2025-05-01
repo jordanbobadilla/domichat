@@ -24,3 +24,15 @@ export async function getHistorial(token: string) {
   if (!res.ok) throw new Error("Error al obtener historial")
   return await res.json() // contiene { historial: [...] }
 }
+
+export async function getEstadoSuscripcion(token: string) {
+  const res = await fetch(`${BASE_URL}/subscription/estado`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!res.ok) throw new Error("Error al obtener suscripción")
+  return await res.json() // { activa: true, expiracion: '...' }
+}

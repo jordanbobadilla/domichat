@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react"
-import StackNavigator from "./navigation/StackNavigator"
-import { NavigationContainer } from "@react-navigation/native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import LoginScreen from "./screens/LoginScreen"
-import ChatScreen from "./screens/ChatScreen"
-
-const Stack = createNativeStackNavigator()
+import StackNavigator from "./navigation/StackNavigator"
 
 export default function App() {
   const [cargando, setCargando] = useState(true)
@@ -26,19 +20,5 @@ export default function App() {
 
   if (cargando) return null
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {token && nombre ? (
-          <Stack.Screen name="Chat">
-            {(props) => (
-              <ChatScreen {...props} route={{ params: { token, nombre } }} />
-            )}
-          </Stack.Screen>
-        ) : (
-          <Stack.Screen name="Login" component={LoginScreen} />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
+  return <StackNavigator token={token} nombre={nombre} />
 }

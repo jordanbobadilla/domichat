@@ -13,6 +13,7 @@ import {
 } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { getHistorial } from "../services/api"
+import { getEstadoSuscripcion } from "../services/api"
 
 import config from "../constants/config"
 
@@ -23,6 +24,10 @@ export default function ChatScreen({ route, navigation }: any) {
     { mensaje: string; respuesta: string; creadoEn: string }[]
   >([])
   const [cargando, setCargando] = useState(false)
+  const [suscripcion, setSuscripcion] = useState<{
+    activa: boolean
+    expiracion?: string
+  } | null>(null)
 
   useEffect(() => {
     async function cargarHistorial() {
@@ -34,7 +39,17 @@ export default function ChatScreen({ route, navigation }: any) {
       }
     }
 
+    const cargarSuscripcion = async () => {
+      try {
+        const data = await getEstadoSuscripcion(token)
+        setSuscripcion(data)
+      } catch (err: any) {
+        console.error("Error suscripción:", err.message)
+      }
+    }
+
     cargarHistorial()
+    cargarSuscripcion()
   }, [])
 
   const enviarMensaje = async () => {
@@ -90,6 +105,16 @@ export default function ChatScreen({ route, navigation }: any) {
             <Text style={styles.cerrar}>Cerrar sesión</Text>
           </TouchableOpacity>
         </View>
+
+        {suscripcion && (
+          <Text style={{ color: suscripcion.activa ? "green" : "gray" }}>
+            {suscripcion.activa
+              ? `✅ Suscripción activa hasta: ${new Date(
+                  suscripcion.expiracion!
+                ).toLocaleDateString()}`
+              : "🚫 No tienes una suscripción activa"}
+          </Text>
+        )}
 
         <ScrollView style={styles.chat}>
           {historial.map((c, i) => (
