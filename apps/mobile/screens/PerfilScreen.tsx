@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { View, Text, StyleSheet, Button, ActivityIndicator } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { getEstadoSuscripcion } from "../services/api"
+import { confirmarSuscripcion, getEstadoSuscripcion } from "../services/api"
 
 export default function PerfilScreen({ route, navigation }: any) {
   const { nombre } = route.params
@@ -34,6 +34,21 @@ export default function PerfilScreen({ route, navigation }: any) {
     navigation.replace("Login")
   }
 
+  const activarSuscripcion = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token")
+      if (!token) throw new Error("Sesión no encontrada")
+
+      await confirmarSuscripcion(token)
+
+      // Volver a consultar el estado actualizado
+      const estado = await getEstadoSuscripcion(token)
+      setSuscripcion(estado)
+    } catch (err: any) {
+      console.error("Error al activar suscripción:", err.message)
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>👤 {nombre}</Text>
@@ -51,6 +66,12 @@ export default function PerfilScreen({ route, navigation }: any) {
         </Text>
       ) : (
         <Text style={styles.estado}>🚫 No tienes suscripción activa</Text>
+      )}
+
+      {!suscripcion?.activa && (
+        <View style={{ marginTop: 20 }}>
+          <Button title="Activar suscripción" onPress={activarSuscripcion} />
+        </View>
       )}
 
       <View style={{ marginTop: 40 }}>

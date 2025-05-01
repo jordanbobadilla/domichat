@@ -36,3 +36,15 @@ export async function getEstadoSuscripcion(token: string) {
   if (!res.ok) throw new Error("Error al obtener suscripción")
   return await res.json() // { activa: true, expiracion: '...' }
 }
+
+export async function confirmarSuscripcion(token: string) {
+  const res = await fetch(`${BASE_URL}/subscription/confirmar`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!res.ok) throw new Error("No se pudo activar la suscripción")
+  return await res.json() // { mensaje: 'Suscripción activada con éxito.' }
+}
