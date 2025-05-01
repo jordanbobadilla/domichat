@@ -18,16 +18,29 @@ import { getEstadoSuscripcion } from "../services/api"
 import config from "../constants/config"
 
 export default function ChatScreen({ route, navigation }: any) {
-  const { token, nombre } = route.params
+  const { token, nombre, mensajePrevio, respuestaPrevio } = route.params
   const [mensaje, setMensaje] = useState("")
   const [historial, setHistorial] = useState<
     { mensaje: string; respuesta: string; creadoEn: string }[]
-  >([])
+  >(
+    mensajePrevio && respuestaPrevio
+      ? [
+          {
+            mensaje: mensajePrevio,
+            respuesta: respuestaPrevio,
+            creadoEn: new Date().toISOString(),
+          },
+        ]
+      : []
+  )
   const [cargando, setCargando] = useState(false)
   const [suscripcion, setSuscripcion] = useState<{
     activa: boolean
     expiracion?: string
   } | null>(null)
+  const [modoReanudar, setModoReanudar] = useState(
+    !!(mensajePrevio && respuestaPrevio)
+  )
 
   useEffect(() => {
     async function cargarHistorial() {
@@ -93,6 +106,11 @@ export default function ChatScreen({ route, navigation }: any) {
     navigation.replace("Login")
   }
 
+  const reiniciarConversacion = () => {
+    setHistorial([])
+    setModoReanudar(false)
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -114,6 +132,14 @@ export default function ChatScreen({ route, navigation }: any) {
                 ).toLocaleDateString()}`
               : "🚫 No tienes una suscripción activa"}
           </Text>
+        )}
+
+        {modoReanudar && (
+          <Button
+            title="🗑️ Reiniciar conversación"
+            onPress={reiniciarConversacion}
+            color="gray"
+          />
         )}
 
         <ScrollView style={styles.chat}>
