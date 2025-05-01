@@ -103,7 +103,10 @@ export default function ChatScreen({ route, navigation }: any) {
     await AsyncStorage.removeItem("token")
     await AsyncStorage.removeItem("nombre")
     setHistorial([])
-    navigation.replace("Login")
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Login" }],
+    })
   }
 
   const reiniciarConversacion = () => {

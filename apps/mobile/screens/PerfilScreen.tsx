@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button, ActivityIndicator } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { confirmarSuscripcion, getEstadoSuscripcion } from "../services/api"
 import { Alert } from "react-native"
+import { ROUTES } from "../constants/routes"
 
 export default function PerfilScreen({ route, navigation }: any) {
   const { nombre } = route.params
@@ -32,7 +33,10 @@ export default function PerfilScreen({ route, navigation }: any) {
 
   const cerrarSesion = async () => {
     await AsyncStorage.clear()
-    navigation.replace("Login")
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTES.LOGIN }],
+    })
   }
 
   const activarSuscripcion = async () => {

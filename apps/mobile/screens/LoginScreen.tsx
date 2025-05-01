@@ -11,6 +11,7 @@ import {
 } from "react-native"
 import { login } from "../services/api"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { ROUTES } from "../constants/routes"
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState("")
@@ -30,9 +31,14 @@ export default function LoginScreen({ navigation }: any) {
       await AsyncStorage.setItem("nombre", res.usuario.nombre)
 
       // Redirigir al chat (sin poder volver atrás)
-      navigation.replace("Chat", {
-        token: res.token,
-        nombre: res.usuario.nombre,
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: ROUTES.MAIN_TABS,
+            params: { token: res.token, nombre: res.usuario.nombre },
+          },
+        ],
       })
     } catch (err: any) {
       Alert.alert("Error al iniciar sesión", err.message)
