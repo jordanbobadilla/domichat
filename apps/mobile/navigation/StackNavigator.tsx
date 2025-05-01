@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import LoginScreen from "../screens/LoginScreen"
-import ChatScreen from "../screens/ChatScreen"
+import TabNavigator from "./TabNavigator"
 
 const Stack = createNativeStackNavigator()
 
@@ -16,9 +16,9 @@ export default function StackNavigator({
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {token && nombre ? (
-          <Stack.Screen name="Chat">
+          <Stack.Screen name="MainTabs">
             {(props) => (
-              <ChatScreen {...props} route={{ params: { token, nombre } }} />
+              <TabNavigator {...props} token={token} nombre={nombre} />
             )}
           </Stack.Screen>
         ) : (
