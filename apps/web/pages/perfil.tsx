@@ -3,6 +3,7 @@ import axios from "axios"
 import { useRouter } from "next/router"
 import { verificarSesion } from "../services/auth"
 import { colors } from "../constants/colors"
+import Header from "@/components/Header"
 
 interface EstadoSuscripcion {
   activa: boolean
@@ -37,26 +38,31 @@ export default function Perfil() {
   }
 
   return (
-    <div style={styles.wrapper}>
-      <h2 style={styles.titulo}>👤 {nombre}</h2>
+    <>
+      <Header />
+      <div style={styles.wrapper}>
+        <h2 style={styles.titulo}>👤 {nombre}</h2>
 
-      {estado ? (
-        estado.activa ? (
-          <p style={styles.activa}>
-            ✅ Suscripción activa hasta el{" "}
-            {new Date(estado.expiracion!).toLocaleDateString()}
-          </p>
+        {estado ? (
+          estado.activa ? (
+            <p style={styles.activa}>
+              ✅ Suscripción activa hasta el{" "}
+              {new Date(estado.expiracion!).toLocaleDateString()}
+            </p>
+          ) : (
+            <p style={styles.inactiva}>🚫 No tienes una suscripción activa</p>
+          )
         ) : (
-          <p style={styles.inactiva}>🚫 No tienes una suscripción activa</p>
-        )
-      ) : (
-        <p style={{ color: colors.texto }}>Cargando estado de suscripción...</p>
-      )}
+          <p style={{ color: colors.texto }}>
+            Cargando estado de suscripción...
+          </p>
+        )}
 
-      <button style={styles.boton} onClick={cerrarSesion}>
-        Cerrar sesión
-      </button>
-    </div>
+        <button style={styles.boton} onClick={cerrarSesion}>
+          Cerrar sesión
+        </button>
+      </div>
+    </>
   )
 }
 

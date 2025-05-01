@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react"
 import axios from "axios"
 import { colors } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
+import Header from "../components/Header"
 
 interface Mensaje {
   mensaje: string
@@ -67,33 +68,36 @@ export default function Chat() {
   }
 
   return (
-    <div style={styles.wrapper}>
-      <h2 style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</h2>
+    <>
+      <Header />
+      <div style={styles.wrapper}>
+        <h2 style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</h2>
 
-      <div ref={chatRef} style={styles.chatBox}>
-        {historial.map((h, i) => (
-          <div key={i} style={styles.card}>
-            <p style={styles.etiquetaUsuario}>🧑 Tú:</p>
-            <p style={styles.mensaje}>{h.mensaje}</p>
-            <p style={styles.etiquetaBot}>🤖 DomiChat:</p>
-            <p style={styles.respuesta}>{h.respuesta}</p>
-          </div>
-        ))}
-      </div>
+        <div ref={chatRef} style={styles.chatBox}>
+          {historial.map((h, i) => (
+            <div key={i} style={styles.card}>
+              <p style={styles.etiquetaUsuario}>🧑 Tú:</p>
+              <p style={styles.mensaje}>{h.mensaje}</p>
+              <p style={styles.etiquetaBot}>🤖 DomiChat:</p>
+              <p style={styles.respuesta}>{h.respuesta}</p>
+            </div>
+          ))}
+        </div>
 
-      <div style={styles.inputBox}>
-        <input
-          type="text"
-          placeholder="Escribe tu mensaje..."
-          value={mensaje}
-          onChange={(e) => setMensaje(e.target.value)}
-          style={styles.input}
-        />
-        <button onClick={enviarMensaje} style={styles.boton}>
-          {cargando ? "..." : "Enviar"}
-        </button>
+        <div style={styles.inputBox}>
+          <input
+            type="text"
+            placeholder="Escribe tu mensaje..."
+            value={mensaje}
+            onChange={(e) => setMensaje(e.target.value)}
+            style={styles.input}
+          />
+          <button onClick={enviarMensaje} style={styles.boton}>
+            {cargando ? "..." : "Enviar"}
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
