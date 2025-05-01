@@ -48,3 +48,22 @@ export async function confirmarSuscripcion(token: string) {
   if (!res.ok) throw new Error("No se pudo activar la suscripción")
   return await res.json() // { mensaje: 'Suscripción activada con éxito.' }
 }
+
+export async function registrarUsuario(
+  nombre: string,
+  email: string,
+  password: string
+) {
+  const res = await fetch(`${BASE_URL}/auth/registro`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nombre, email, password }),
+  })
+
+  if (!res.ok) {
+    const data = await res.json()
+    throw new Error(data.error || "Registro fallido")
+  }
+
+  return await res.json() // { token, usuario: { id, nombre } }
+}

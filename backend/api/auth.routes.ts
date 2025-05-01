@@ -1,5 +1,3 @@
-// backend/api/auth.routes.ts
-
 import { Router } from "express"
 import prisma from "../db/prisma"
 import bcrypt from "bcrypt"
@@ -11,13 +9,18 @@ const router = Router()
 router.post("/registro", async (req, res) => {
   const { email, password, nombre } = req.body
 
+  if (!email || !password || !nombre) {
+    res.status(400).json({ error: "Faltan campos requeridos." })
+    return
+  }
+
   try {
     const usuarioExistente = await prisma.usuario.findUnique({
       where: { email },
     })
 
     if (usuarioExistente) {
-      res.status(400).json({ error: "Este email ya está registrado." })
+      res.status(409).json({ error: "Ya existe un usuario con ese email." })
       return
     }
 
@@ -26,8 +29,8 @@ router.post("/registro", async (req, res) => {
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         email,
-        nombre,
         password: hashedPassword,
+        nombre,
       },
     })
 
@@ -45,7 +48,7 @@ router.post("/registro", async (req, res) => {
     })
   } catch (error) {
     console.error("Error en registro:", error)
-    res.status(500).json({ error: "Error al registrar usuario." })
+    res.status(500).json({ error: "Error al registrar el usuario." })
   }
 })
 

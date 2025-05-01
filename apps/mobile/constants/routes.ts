@@ -6,4 +6,5 @@ export const ROUTES = {
   CHAT: "Chat",
   HISTORIAL: "Historial",
   PERFIL: "Perfil",
+  REGISTER: "Register",
 }

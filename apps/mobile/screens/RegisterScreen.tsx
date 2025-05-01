@@ -9,39 +9,42 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native"
-import { login } from "../services/api"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { registrarUsuario } from "../services/api"
 import { ROUTES } from "../constants/routes"
 
-export default function LoginScreen({ navigation }: any) {
+export default function RegisterScreen({ navigation }: any) {
+  const [nombre, setNombre] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [cargando, setCargando] = useState(false)
 
-  const iniciarSesion = async () => {
-    if (!email || !password) return Alert.alert("Completa ambos campos")
+  const manejarRegistro = async () => {
+    if (!nombre || !email || !password) {
+      return Alert.alert("Por favor completa todos los campos")
+    }
 
     try {
       setCargando(true)
+      const res = await registrarUsuario(nombre, email, password)
 
-      const res = await login(email, password)
-
-      // Guardar token y nombre localmente
       await AsyncStorage.setItem("token", res.token)
       await AsyncStorage.setItem("nombre", res.usuario.nombre)
 
-      // Redirigir al chat (sin poder volver atrás)
       navigation.reset({
         index: 0,
         routes: [
           {
             name: ROUTES.MAIN_TABS,
-            params: { token: res.token, nombre: res.usuario.nombre },
+            params: {
+              token: res.token,
+              nombre: res.usuario.nombre,
+            },
           },
         ],
       })
     } catch (err: any) {
-      Alert.alert("Error al iniciar sesión", err.message)
+      Alert.alert("Error", err.message)
     } finally {
       setCargando(false)
     }
@@ -53,37 +56,43 @@ export default function LoginScreen({ navigation }: any) {
       style={{ flex: 1 }}
     >
       <View style={styles.container}>
-        <Text style={styles.titulo}>Bienvenido a DomiChat 🇩🇴</Text>
+        <Text style={styles.titulo}>Crear cuenta</Text>
 
+        <TextInput
+          placeholder="Nombre completo"
+          style={styles.input}
+          value={nombre}
+          onChangeText={setNombre}
+        />
         <TextInput
           placeholder="Correo electrónico"
           style={styles.input}
           value={email}
           onChangeText={setEmail}
-          keyboardType="email-address"
           autoCapitalize="none"
+          keyboardType="email-address"
         />
-
         <TextInput
           placeholder="Contraseña"
           style={styles.input}
-          secureTextEntry
           value={password}
           onChangeText={setPassword}
+          secureTextEntry
         />
 
         <Button
-          title={cargando ? "Entrando..." : "Iniciar sesión"}
-          onPress={iniciarSesion}
+          title={cargando ? "Creando cuenta..." : "Registrarse"}
+          onPress={manejarRegistro}
         />
+
         <View style={{ marginTop: 20 }}>
           <Text style={{ textAlign: "center" }}>
-            ¿No tienes cuenta?{" "}
+            ¿Ya tienes cuenta?{" "}
             <Text
               style={{ color: "blue" }}
-              onPress={() => navigation.replace(ROUTES.REGISTER)}
+              onPress={() => navigation.replace(ROUTES.LOGIN)}
             >
-              Crea una aquí
+              Inicia sesión
             </Text>
           </Text>
         </View>

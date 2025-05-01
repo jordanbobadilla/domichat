@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import LoginScreen from "../screens/LoginScreen"
 import TabNavigator from "./TabNavigator"
 import { ROUTES } from "../constants/routes"
+import RegisterScreen from "../screens/RegisterScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -20,6 +21,7 @@ export default function StackNavigator({
         <Stack.Screen name={ROUTES.MAIN_TABS}>
           {(props) => <TabNavigator {...props} />}
         </Stack.Screen>
+        <Stack.Screen name={ROUTES.REGISTER} component={RegisterScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
