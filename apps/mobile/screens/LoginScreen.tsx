@@ -3,7 +3,7 @@ import {
   View,
   Text,
   TextInput,
-  Button,
+  TouchableOpacity,
   StyleSheet,
   Alert,
   KeyboardAvoidingView,
@@ -12,6 +12,7 @@ import {
 import { login } from "../services/api"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { ROUTES } from "../constants/routes"
+import { colors } from "../constants/colors"
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState("")
@@ -23,14 +24,11 @@ export default function LoginScreen({ navigation }: any) {
 
     try {
       setCargando(true)
-
       const res = await login(email, password)
 
-      // Guardar token y nombre localmente
       await AsyncStorage.setItem("token", res.token)
       await AsyncStorage.setItem("nombre", res.usuario.nombre)
 
-      // Redirigir al chat (sin poder volver atrás)
       navigation.reset({
         index: 0,
         routes: [
@@ -50,13 +48,14 @@ export default function LoginScreen({ navigation }: any) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: colors.fondo }}
     >
       <View style={styles.container}>
-        <Text style={styles.titulo}>Bienvenido a DomiChat 🇩🇴</Text>
+        <Text style={styles.titulo}>Iniciar sesión</Text>
 
         <TextInput
           placeholder="Correo electrónico"
+          placeholderTextColor="#888"
           style={styles.input}
           value={email}
           onChangeText={setEmail}
@@ -66,25 +65,30 @@ export default function LoginScreen({ navigation }: any) {
 
         <TextInput
           placeholder="Contraseña"
+          placeholderTextColor="#888"
           style={styles.input}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
 
-        <Button
-          title={cargando ? "Entrando..." : "Iniciar sesión"}
+        <TouchableOpacity
+          style={styles.boton}
           onPress={iniciarSesion}
-        />
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ textAlign: "center" }}>
-            ¿No tienes cuenta?{" "}
-            <Text
-              style={{ color: "blue" }}
-              onPress={() => navigation.replace(ROUTES.REGISTER)}
-            >
-              Crea una aquí
-            </Text>
+          disabled={cargando}
+        >
+          <Text style={styles.botonTexto}>
+            {cargando ? "Entrando..." : "Entrar"}
+          </Text>
+        </TouchableOpacity>
+
+        <View style={styles.enlace}>
+          <Text style={{ color: colors.texto }}>¿No tienes cuenta? </Text>
+          <Text
+            onPress={() => navigation.replace(ROUTES.REGISTER)}
+            style={{ color: colors.primario, fontWeight: "600" }}
+          >
+            Crea una aquí
           </Text>
         </View>
       </View>
@@ -93,18 +97,39 @@ export default function LoginScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
+  container: { flex: 1, justifyContent: "center", padding: 24 },
   titulo: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontSize: 26,
+    fontWeight: "700",
+    color: colors.primario,
     marginBottom: 30,
+    textAlign: "center",
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 6,
+    borderColor: colors.borde,
+    borderRadius: 10,
     padding: 12,
-    marginBottom: 15,
+    marginBottom: 16,
+    backgroundColor: "#fff",
+    fontSize: 16,
+    color: colors.texto,
+  },
+  boton: {
+    backgroundColor: colors.primario,
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  botonTexto: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  enlace: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 24,
   },
 })
