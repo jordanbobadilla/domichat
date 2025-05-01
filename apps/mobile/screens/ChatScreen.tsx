@@ -85,7 +85,7 @@ export default function ChatScreen({ route, navigation }: any) {
     >
       <View style={styles.container}>
         <View style={styles.encabezado}>
-          <Text style={styles.titulo}>Hola, {nombre} 👋</Text>
+          <Text style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</Text>
           <TouchableOpacity onPress={cerrarSesion}>
             <Text style={styles.cerrar}>Cerrar sesión</Text>
           </TouchableOpacity>
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginVertical: 10,
   },
   cerrar: {
     color: "red",
