@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import {
   View,
   Text,
   TextInput,
-  Button,
+  TouchableOpacity,
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
-  TouchableOpacity,
 } from "react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { getHistorial } from "../services/api"
-import { getEstadoSuscripcion } from "../services/api"
+import { colors } from "../constants/colors"
+import { Ionicons } from "@expo/vector-icons"
 
-import config from "../constants/config"
-
-export default function ChatScreen({ route, navigation }: any) {
+export default function ChatScreen({ route }: any) {
   const { token, nombre, mensajePrevio, respuestaPrevio } = route.params
+
   const [mensaje, setMensaje] = useState("")
   const [historial, setHistorial] = useState<
     { mensaje: string; respuesta: string; creadoEn: string }[]
@@ -34,35 +31,14 @@ export default function ChatScreen({ route, navigation }: any) {
       : []
   )
   const [cargando, setCargando] = useState(false)
-  const [suscripcion, setSuscripcion] = useState<{
-    activa: boolean
-    expiracion?: string
-  } | null>(null)
-  const [modoReanudar, setModoReanudar] = useState(
-    !!(mensajePrevio && respuestaPrevio)
-  )
+  const scrollRef = useRef<ScrollView>(null)
 
   useEffect(() => {
-    async function cargarHistorial() {
-      try {
-        const data = await getHistorial(token)
-        setHistorial(data.historial)
-      } catch (err: any) {
-        console.error("Historial error:", err.message)
-      }
+    if (!mensajePrevio && !respuestaPrevio) {
+      getHistorial(token)
+        .then((data) => setHistorial(data.historial))
+        .catch(console.error)
     }
-
-    const cargarSuscripcion = async () => {
-      try {
-        const data = await getEstadoSuscripcion(token)
-        setSuscripcion(data)
-      } catch (err: any) {
-        console.error("Error suscripción:", err.message)
-      }
-    }
-
-    cargarHistorial()
-    cargarSuscripcion()
   }, [])
 
   const enviarMensaje = async () => {
@@ -71,126 +47,182 @@ export default function ChatScreen({ route, navigation }: any) {
     try {
       setCargando(true)
 
-      const res = await fetch(`${config.BASE_URL}/chat`, {
+      const res = await fetch(`http://192.168.X.X:4000/api/chat`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ mensaje }),
       })
 
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Error en la IA")
 
       setHistorial([
+        ...historial,
         {
           mensaje,
           respuesta: data.respuesta,
           creadoEn: new Date().toISOString(),
         },
-        ...historial,
       ])
+
       setMensaje("")
-    } catch (err: any) {
-      Alert.alert("Error", err.message)
+      scrollRef.current?.scrollToEnd({ animated: true })
+    } catch (err) {
+      console.error(err)
     } finally {
       setCargando(false)
     }
   }
 
-  const cerrarSesion = async () => {
-    await AsyncStorage.removeItem("token")
-    await AsyncStorage.removeItem("nombre")
-    setHistorial([])
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Login" }],
-    })
-  }
-
-  const reiniciarConversacion = () => {
-    setHistorial([])
-    setModoReanudar(false)
-  }
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: colors.fondo }}
     >
       <View style={styles.container}>
-        <View style={styles.encabezado}>
-          <Text style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</Text>
-          <TouchableOpacity onPress={cerrarSesion}>
-            <Text style={styles.cerrar}>Cerrar sesión</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</Text>
 
-        {suscripcion && (
-          <Text style={{ color: suscripcion.activa ? "green" : "gray" }}>
-            {suscripcion.activa
-              ? `✅ Suscripción activa hasta: ${new Date(
-                  suscripcion.expiracion!
-                ).toLocaleDateString()}`
-              : "🚫 No tienes una suscripción activa"}
-          </Text>
-        )}
+        <ScrollView
+          ref={scrollRef}
+          style={styles.chat}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        >
+          {historial.map((item, i) => {
+            const esPar = i % 2 === 0
 
-        {modoReanudar && (
-          <Button
-            title="🗑️ Reiniciar conversación"
-            onPress={reiniciarConversacion}
-            color="gray"
-          />
-        )}
+            return (
+              <View key={i} style={{ marginBottom: 12 }}>
+                {/* Mensaje del usuario */}
+                <View
+                  style={[
+                    styles.mensajeUsuario,
+                    {
+                      backgroundColor: esPar
+                        ? colors.primario
+                        : colors.secundario,
+                      alignSelf: "flex-end",
+                    },
+                  ]}
+                >
+                  <Text style={styles.textoUsuario}>{item.mensaje}</Text>
+                </View>
 
-        <ScrollView style={styles.chat}>
-          {historial.map((c, i) => (
-            <View key={i} style={{ marginBottom: 15 }}>
-              <Text style={styles.mensaje}>🧑 Tú: {c.mensaje}</Text>
-              <Text style={styles.respuesta}>🤖 DomiChat: {c.respuesta}</Text>
-            </View>
-          ))}
+                {/* Respuesta de DomiChat */}
+                <View
+                  style={[
+                    styles.mensajeBot,
+                    {
+                      backgroundColor: "#fff",
+                      alignSelf: "flex-start",
+                    },
+                  ]}
+                >
+                  <Text style={styles.textoBot}>{item.respuesta}</Text>
+                </View>
+              </View>
+            )
+          })}
         </ScrollView>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Escribe tu mensaje..."
-          value={mensaje}
-          onChangeText={setMensaje}
-        />
-        <Button
-          title={cargando ? "Enviando..." : "Enviar"}
-          onPress={enviarMensaje}
-          disabled={cargando}
-        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Escribe tu mensaje..."
+            placeholderTextColor="#888"
+            value={mensaje}
+            onChangeText={setMensaje}
+          />
+          <TouchableOpacity
+            style={styles.boton}
+            onPress={enviarMensaje}
+            disabled={cargando}
+          >
+            <Ionicons name="send" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, paddingTop: 50 },
-  titulo: { fontSize: 22, fontWeight: "bold", marginBottom: 10 },
-  chat: { flex: 1, marginBottom: 20 },
-  input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 10,
+  container: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 64,
+    paddingBottom: 16,
+  },
+  titulo: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: colors.primario,
     marginBottom: 10,
-    borderRadius: 6,
   },
-  mensaje: { fontWeight: "600" },
-  respuesta: { color: "#444", marginTop: 2 },
-  encabezado: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 10,
+  chat: { flex: 1, marginBottom: 10 },
+  mensajeCard: {
+    backgroundColor: "#fff",
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 12,
+    borderColor: colors.borde,
+    borderWidth: 1,
   },
-  cerrar: {
-    color: "red",
+  usuario: {
     fontWeight: "600",
+    color: colors.primario,
+    marginTop: 5,
+  },
+  texto: {
+    fontSize: 15,
+    color: colors.texto,
+    marginBottom: 5,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderTopColor: colors.borde,
+    borderTopWidth: 1,
+    paddingTop: 8,
+  },
+  input: {
+    flex: 1,
+    borderColor: colors.borde,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 12,
+    backgroundColor: "#fff",
+    fontSize: 16,
+    color: colors.texto,
+    marginRight: 8,
+  },
+  boton: {
+    backgroundColor: colors.primario,
+    padding: 12,
+    borderRadius: 10,
+  },
+  mensajeUsuario: {
+    maxWidth: "80%",
+    padding: 12,
+    borderRadius: 12,
+    borderTopRightRadius: 0,
+  },
+  mensajeBot: {
+    maxWidth: "80%",
+    padding: 12,
+    borderRadius: 12,
+    borderTopLeftRadius: 0,
+    borderWidth: 1,
+    borderColor: colors.borde,
+  },
+  textoUsuario: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "500",
+  },
+  textoBot: {
+    color: colors.texto,
+    fontSize: 15,
   },
 })
