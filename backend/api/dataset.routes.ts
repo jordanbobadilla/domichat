@@ -1,6 +1,7 @@
 import express from "express"
 import fs from "fs"
 import path from "path"
+import readline from "readline"
 
 const router = express.Router()
 const datasetPath = path.join(
@@ -26,6 +27,35 @@ router.post("/agregar", (req, res) => {
 
     return res.json({ mensaje: "Entrada guardada" })
   })
+})
+
+router.get("/listar", (req, res) => {
+  const resultados: { pregunta: string; respuesta: string }[] = []
+
+  try {
+    const archivo = fs.createReadStream(datasetPath)
+
+    const rl = readline.createInterface({
+      input: archivo,
+      crlfDelay: Infinity,
+    })
+
+    rl.on("line", (line) => {
+      try {
+        const entrada = JSON.parse(line)
+        resultados.push(entrada)
+      } catch (e) {
+        console.warn("Línea inválida en el dataset:", line)
+      }
+    })
+
+    rl.on("close", () => {
+      res.json(resultados)
+    })
+  } catch (error) {
+    console.error("Error leyendo el dataset:", error)
+    res.status(500).json({ error: "No se pudo leer el dataset" })
+  }
 })
 
 export default router
