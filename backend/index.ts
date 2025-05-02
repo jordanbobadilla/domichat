@@ -3,8 +3,8 @@ import cors from "cors"
 import dotenv from "dotenv"
 import authRoutes from "./api/auth.routes"
 import chatRoutes from "./api/chat.routes"
-// import userRoutes from "./api/user.routes"
 import subscriptionRoutes from "./api/subscription.routes"
+import datasetRoutes from "./api/dataset.routes"
 
 // Inicializar configuración
 dotenv.config()
@@ -19,8 +19,9 @@ app.use(express.json())
 // Rutas
 app.use("/api/auth", authRoutes)
 app.use("/api/chat", chatRoutes)
-// app.use("/api/user", userRoutes)
 app.use("/api/subscription", subscriptionRoutes)
+
+app.use("/api/dataset", datasetRoutes)
 
 // Ruta de prueba
 app.get("/", (_req, res) => {
