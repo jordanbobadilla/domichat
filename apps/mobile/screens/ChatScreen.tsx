@@ -12,6 +12,8 @@ import {
 import { BASE_URL, getHistorial } from "../services/api"
 import { colors } from "../constants/colors"
 import { Ionicons } from "@expo/vector-icons"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import * as Speech from "expo-speech"
 
 export default function ChatScreen({ route }: any) {
   const { token, nombre, mensajePrevio, respuestaPrevio } = route.params
@@ -32,6 +34,7 @@ export default function ChatScreen({ route }: any) {
   )
   const [cargando, setCargando] = useState(false)
   const scrollRef = useRef<ScrollView>(null)
+  const [vozDominicana, setVozDominicana] = useState("popi")
 
   useEffect(() => {
     if (!mensajePrevio && !respuestaPrevio) {
@@ -39,6 +42,9 @@ export default function ChatScreen({ route }: any) {
         .then((data) => setHistorial(data.historial))
         .catch(console.error)
     }
+    AsyncStorage.getItem("voz_dominicana").then((voz) => {
+      if (voz) setVozDominicana(voz)
+    })
   }, [])
 
   const enviarMensaje = async () => {
@@ -63,14 +69,24 @@ export default function ChatScreen({ route }: any) {
 
       const data = await res.json()
 
+      // Modifica la respuesta escrita
+      const textoAdaptado = modificarRespuestaSegunVoz(
+        data.respuesta,
+        vozDominicana
+      )
+
+      // Agrega al historial
       setHistorial([
         ...historial,
         {
           mensaje,
-          respuesta: data.respuesta,
+          respuesta: textoAdaptado,
           creadoEn: new Date().toISOString(),
         },
       ])
+
+      // ¡Habla!
+      Speech.speak(textoAdaptado, { rate: 1.0 })
 
       setMensaje("")
       scrollRef.current?.scrollToEnd({ animated: true })
@@ -78,6 +94,26 @@ export default function ChatScreen({ route }: any) {
       console.error(err)
     } finally {
       setCargando(false)
+    }
+  }
+
+  const modificarRespuestaSegunVoz = (texto: string, voz: string) => {
+    switch (voz) {
+      case "popi":
+        return texto // voz formal con acento neutral
+      case "wawawa":
+        return texto
+          .replace(/¿/g, "")
+          .replace(/\?/g, "")
+          .replace(/s /g, " e ")
+          .replace(/tú/g, "tú men")
+          .replace(/\./g, " loco.")
+      case "cibaeña":
+        return texto.replace(/r\b/g, "i").replace(/l\b/g, "i")
+      case "sureña":
+        return texto.replace(/s/g, "h").replace(/r\b/g, "l")
+      default:
+        return texto
     }
   }
 

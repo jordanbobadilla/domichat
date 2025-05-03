@@ -4,6 +4,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
 import { colors } from "../constants/colors"
+import { ROUTES } from "../constants/routes"
 
 export default function WelcomeScreen({ navigation }: any) {
   const [loading, setLoading] = useState(true)
@@ -22,7 +23,7 @@ export default function WelcomeScreen({ navigation }: any) {
 
   const continuar = async () => {
     await AsyncStorage.setItem("welcome_shown", "true")
-    navigation.replace("Login")
+    navigation.replace(ROUTES.VOZ_TUTORIAL)
   }
 
   if (loading) return null

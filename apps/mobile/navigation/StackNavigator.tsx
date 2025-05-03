@@ -5,6 +5,7 @@ import TabNavigator from "./TabNavigator"
 import { ROUTES } from "../constants/routes"
 import RegisterScreen from "../screens/RegisterScreen"
 import WelcomeScreen from "../screens/WelcomeScreen"
+import VozTutorialScreen from "../screens/VozTutorialScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -19,6 +20,10 @@ export default function StackNavigator({
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name={ROUTES.WELCOME} component={WelcomeScreen} />
+        <Stack.Screen
+          name={ROUTES.VOZ_TUTORIAL}
+          component={VozTutorialScreen}
+        />
         <Stack.Screen name={ROUTES.LOGIN} component={LoginScreen} />
         <Stack.Screen name={ROUTES.MAIN_TABS}>
           {(props) => <TabNavigator {...props} />}
