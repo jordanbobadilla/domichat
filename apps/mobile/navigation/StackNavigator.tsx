@@ -4,6 +4,7 @@ import LoginScreen from "../screens/LoginScreen"
 import TabNavigator from "./TabNavigator"
 import { ROUTES } from "../constants/routes"
 import RegisterScreen from "../screens/RegisterScreen"
+import WelcomeScreen from "../screens/WelcomeScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -17,6 +18,7 @@ export default function StackNavigator({
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name={ROUTES.WELCOME} component={WelcomeScreen} />
         <Stack.Screen name={ROUTES.LOGIN} component={LoginScreen} />
         <Stack.Screen name={ROUTES.MAIN_TABS}>
           {(props) => <TabNavigator {...props} />}
