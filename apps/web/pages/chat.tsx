@@ -33,6 +33,34 @@ export default function Chat() {
       .catch(() => {})
   }, [])
 
+  function modificarRespuestaSegunVoz(texto: string, voz: string): string {
+    switch (voz) {
+      case "popi":
+        return texto
+      case "wawawa":
+        return texto
+          .replace(/¿/g, "")
+          .replace(/\?/g, "")
+          .replace(/s /g, " e ")
+          .replace(/tú/g, "tú men")
+          .replace(/\./g, " loco.")
+      case "cibaeña":
+        return texto.replace(/r\b/g, "i").replace(/l\b/g, "i")
+      case "sureña":
+        return texto.replace(/s/g, "h").replace(/r\b/g, "l")
+      default:
+        return texto
+    }
+  }
+
+  function hablar(texto: string) {
+    if ("speechSynthesis" in window) {
+      const utter = new SpeechSynthesisUtterance(texto)
+      utter.lang = "es-DO"
+      utter.rate = 1.0
+      window.speechSynthesis.speak(utter)
+    }
+  }
   const enviarMensaje = async () => {
     if (!mensaje.trim()) return
 
@@ -44,14 +72,24 @@ export default function Chat() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
 
+      const voz = localStorage.getItem("voz_dominicana") || "popi"
+      const respuestaAdaptada = modificarRespuestaSegunVoz(
+        res.data.respuesta,
+        voz
+      )
+
+      // Agregar al historial
       setHistorial([
         ...historial,
         {
           mensaje,
-          respuesta: res.data.respuesta,
+          respuesta: respuestaAdaptada,
           creadoEn: new Date().toISOString(),
         },
       ])
+
+      // Hablar
+      hablar(respuestaAdaptada)
       setMensaje("")
 
       setTimeout(() => {
