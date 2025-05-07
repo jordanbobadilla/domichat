@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import {
   View,
   Text,
@@ -8,16 +8,35 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Button,
 } from "react-native"
 import { login } from "../services/api"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { ROUTES } from "../constants/routes"
 import { colors } from "../constants/colors"
+import { useGoogleLogin, loginWithApple } from "../services/authSocial"
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [cargando, setCargando] = useState(false)
+  const [request, response, promptAsync] = useGoogleLogin()
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { authentication } = response
+      Alert.alert("Login con Google exitoso", JSON.stringify(authentication))
+      // Aquí puedes hacer login con tu backend usando authentication.accessToken
+    }
+  }, [response])
+
+  const iniciarSesionConApple = async () => {
+    const result = await loginWithApple()
+    if (result) {
+      Alert.alert("Login con Apple exitoso", JSON.stringify(result))
+      // Puedes autenticar usando result.email o result.user
+    }
+  }
 
   const iniciarSesion = async () => {
     if (!email || !password) return Alert.alert("Completa ambos campos")
@@ -81,6 +100,19 @@ export default function LoginScreen({ navigation }: any) {
             {cargando ? "Entrando..." : "Entrar"}
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.boton} onPress={() => promptAsync()}>
+          <Text style={styles.botonTexto}>Iniciar sesión con Google</Text>
+        </TouchableOpacity>
+
+        {Platform.OS === "ios" && (
+          <TouchableOpacity
+            style={[styles.boton, { backgroundColor: "#000" }]}
+            onPress={iniciarSesionConApple}
+          >
+            <Text style={styles.botonTexto}>Iniciar sesión con Apple</Text>
+          </TouchableOpacity>
+        )}
 
         <View style={styles.enlace}>
           <Text style={{ color: colors.texto }}>¿No tienes cuenta? </Text>
