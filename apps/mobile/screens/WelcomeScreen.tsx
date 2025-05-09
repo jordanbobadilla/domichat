@@ -1,19 +1,28 @@
-// src/screens/WelcomeScreen.tsx
-import React, { useEffect, useState } from "react"
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native"
+import React, { useEffect, useState, useContext } from "react"
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
-import { colors } from "../constants/colors"
 import { ROUTES } from "../constants/routes"
+import { ThemeContext } from "../context/ThemeContext"
+import { temas } from "../constants/colors"
 
 export default function WelcomeScreen({ navigation }: any) {
   const [loading, setLoading] = useState(true)
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   useEffect(() => {
     const verificar = async () => {
       const yaVisto = await AsyncStorage.getItem("welcome_shown")
       if (yaVisto === "true") {
-        navigation.replace("Login") // o el stack principal
+        navigation.replace("Login")
       } else {
         setLoading(false)
       }
@@ -26,20 +35,32 @@ export default function WelcomeScreen({ navigation }: any) {
     navigation.replace(ROUTES.VOZ_TUTORIAL)
   }
 
-  if (loading) return null
+  if (loading) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.fondo }]}>
+        <ActivityIndicator size="large" color={colors.primario} />
+      </View>
+    )
+  }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.fondo }]}>
       <Image
         source={require("../assets/icon.png")}
         style={styles.logo}
         resizeMode="contain"
       />
-      <Text style={styles.titulo}>Bienvenido a DomiChat</Text>
-      <Text style={styles.subtitulo}>
+      <Text style={[styles.titulo, { color: colors.texto }]}>
+        Bienvenido a DomiChat
+      </Text>
+      <Text style={[styles.subtitulo, { color: colors.gris }]}>
         Tu asistente dominicano inteligente 🇩🇴
       </Text>
-      <TouchableOpacity onPress={continuar} style={styles.boton}>
+
+      <TouchableOpacity
+        onPress={continuar}
+        style={[styles.boton, { backgroundColor: colors.primario }]}
+      >
         <Text style={styles.botonTexto}>Empezar</Text>
       </TouchableOpacity>
     </View>
@@ -51,28 +72,33 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
-    padding: 20,
+    paddingLeft: 24,
+    paddingRight: 24,
   },
-  logo: { width: 200, height: 200, marginBottom: 30 },
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 32,
+  },
   titulo: {
     fontSize: 24,
     fontWeight: "bold",
-    color: colors.primario,
+    marginBottom: 12,
     textAlign: "center",
   },
   subtitulo: {
     fontSize: 16,
-    color: "#555",
     textAlign: "center",
-    marginTop: 10,
-    marginBottom: 40,
+    marginBottom: 32,
   },
   boton: {
-    backgroundColor: colors.primario,
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 12,
   },
-  botonTexto: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  botonTexto: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
 })

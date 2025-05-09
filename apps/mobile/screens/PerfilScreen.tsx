@@ -1,42 +1,55 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import {
   View,
   Text,
   StyleSheet,
-  Button,
-  ActivityIndicator,
   TouchableOpacity,
-  Alert,
+  Image,
+  ActivityIndicator,
 } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { getEstadoSuscripcion, confirmarSuscripcion } from "../services/api"
-import { colors } from "../constants/colors"
+import { getEstadoSuscripcion } from "../services/api"
 import { ROUTES } from "../constants/routes"
+import { ThemeContext } from "../context/ThemeContext"
+import { temas } from "../constants/colors"
+import { useNavigation } from "@react-navigation/native"
 
 export default function PerfilScreen({ route, navigation }: any) {
-  const { nombre } = route.params
+  const [nombre, setNombre] = useState("")
+  const [email, setEmail] = useState("")
+  const [foto, setFoto] = useState("")
   const [suscripcion, setSuscripcion] = useState<null | {
     activa: boolean
     expiracion?: string
   }>(null)
   const [cargando, setCargando] = useState(true)
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   useEffect(() => {
-    const cargarEstado = async () => {
+    const cargarPerfil = async () => {
       try {
+        const nombreGuardado = await AsyncStorage.getItem("nombre")
+        const emailGuardado = await AsyncStorage.getItem("email")
+        const fotoGuardada = await AsyncStorage.getItem("foto")
+
+        if (nombreGuardado) setNombre(nombreGuardado)
+        if (emailGuardado) setEmail(emailGuardado)
+        if (fotoGuardada) setFoto(fotoGuardada)
+
         const token = await AsyncStorage.getItem("token")
         if (!token) throw new Error("No hay sesión")
+
         const estado = await getEstadoSuscripcion(token)
         setSuscripcion(estado)
       } catch (err) {
-        console.error("Error al cargar suscripción:", err)
-        setSuscripcion(null)
+        console.error("Error al cargar perfil/suscripción:", err)
       } finally {
         setCargando(false)
       }
     }
 
-    cargarEstado()
+    cargarPerfil()
   }, [])
 
   const cerrarSesion = async () => {
@@ -47,63 +60,61 @@ export default function PerfilScreen({ route, navigation }: any) {
     })
   }
 
-  const activarSuscripcion = () => {
-    Alert.alert(
-      "Activar suscripción",
-      "¿Deseas activar tu suscripción premium por 1 mes?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Activar",
-          onPress: async () => {
-            const token = await AsyncStorage.getItem("token")
-            if (!token) return
-
-            await confirmarSuscripcion(token)
-            const nuevoEstado = await getEstadoSuscripcion(token)
-            setSuscripcion(nuevoEstado)
-          },
-        },
-      ]
+  if (cargando) {
+    return (
+      <View style={[styles.centered, { backgroundColor: colors.fondo }]}>
+        <ActivityIndicator size="large" color={colors.primario} />
+        <Text style={{ marginTop: 10, color: colors.texto }}>
+          Cargando perfil...
+        </Text>
+      </View>
     )
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>👤 {nombre}</Text>
-
-      {cargando ? (
-        <ActivityIndicator
-          size="large"
-          color={colors.primario}
-          style={{ marginTop: 30 }}
-        />
+    <View style={[styles.container, { backgroundColor: colors.fondo }]}>
+      {foto ? (
+        <Image source={{ uri: foto }} style={styles.avatar} />
       ) : (
-        <>
-          {suscripcion?.activa ? (
-            <Text style={styles.suscripcionActiva}>
-              ✅ Suscripción activa hasta{" "}
-              {new Date(suscripcion.expiracion!).toLocaleDateString()}
-            </Text>
-          ) : (
-            <Text style={styles.suscripcionInactiva}>
-              🚫 No tienes suscripción activa
-            </Text>
-          )}
-
-          {!suscripcion?.activa && (
-            <TouchableOpacity
-              style={styles.botonPrimario}
-              onPress={activarSuscripcion}
-            >
-              <Text style={styles.textoBoton}>Activar suscripción</Text>
-            </TouchableOpacity>
-          )}
-        </>
+        <View
+          style={[styles.avatarPlaceholder, { backgroundColor: colors.gris }]}
+        >
+          <Text style={styles.avatarInicial}>{nombre.charAt(0)}</Text>
+        </View>
       )}
 
-      <TouchableOpacity style={styles.botonSecundario} onPress={cerrarSesion}>
-        <Text style={styles.textoBoton}>Cerrar sesión</Text>
+      <Text style={[styles.nombre, { color: colors.texto }]}>{nombre}</Text>
+      {email ? (
+        <Text style={[styles.email, { color: colors.gris }]}>{email}</Text>
+      ) : null}
+
+      <View style={styles.suscripcionBox}>
+        <Text style={[styles.subTitulo, { color: colors.texto }]}>
+          Estado de suscripción
+        </Text>
+        {suscripcion?.activa ? (
+          <Text style={{ color: colors.exito }}>
+            Activa hasta {suscripcion.expiracion}
+          </Text>
+        ) : (
+          <Text style={{ color: colors.peligro }}>
+            No tienes suscripción activa
+          </Text>
+        )}
+      </View>
+
+      <TouchableOpacity
+        style={[styles.botonSecundario, { backgroundColor: colors.primario }]}
+        onPress={() => navigation.navigate("Configuracion")}
+      >
+        <Text style={styles.botonTexto}>Configuración de DomiChat</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.botonCerrar, { backgroundColor: colors.peligro }]}
+        onPress={cerrarSesion}
+      >
+        <Text style={styles.botonTexto}>Cerrar sesión</Text>
       </TouchableOpacity>
     </View>
   )
@@ -112,45 +123,65 @@ export default function PerfilScreen({ route, navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
-    backgroundColor: colors.fondo,
+    alignItems: "center",
     justifyContent: "center",
+    paddingTop: 48,
+    paddingLeft: 24,
+    paddingRight: 24,
   },
-  titulo: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: colors.primario,
-    textAlign: "center",
-    marginBottom: 30,
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  suscripcionActiva: {
-    color: colors.exito,
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 16,
   },
-  suscripcionInactiva: {
-    color: colors.texto,
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  botonPrimario: {
-    backgroundColor: colors.primario,
-    paddingVertical: 14,
-    borderRadius: 10,
+  avatarPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
   },
-  botonSecundario: {
-    backgroundColor: colors.secundario,
-    paddingVertical: 14,
-    borderRadius: 10,
+  avatarInicial: {
+    fontSize: 36,
+    color: "#fff",
+  },
+  nombre: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  email: {
+    fontSize: 14,
+    marginBottom: 24,
+  },
+  suscripcionBox: {
+    marginBottom: 24,
     alignItems: "center",
   },
-  textoBoton: {
-    color: "#fff",
-    fontWeight: "600",
+  subTitulo: {
     fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 6,
+  },
+  botonSecundario: {
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  botonCerrar: {
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  botonTexto: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 })

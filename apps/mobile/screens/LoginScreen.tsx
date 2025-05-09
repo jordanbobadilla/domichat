@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import {
   View,
   Text,
@@ -8,35 +8,30 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  Button,
 } from "react-native"
-import { login } from "../services/api"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { login } from "../services/api"
 import { ROUTES } from "../constants/routes"
-import { colors } from "../constants/colors"
 import { useGoogleLogin, loginWithApple } from "../services/authSocial"
+import { ThemeContext } from "../context/ThemeContext"
+import { temas } from "../constants/colors"
 
 export default function LoginScreen({ navigation }: any) {
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [cargando, setCargando] = useState(false)
+
   const [request, response, promptAsync] = useGoogleLogin()
 
   useEffect(() => {
     if (response?.type === "success") {
       const { authentication } = response
       Alert.alert("Login con Google exitoso", JSON.stringify(authentication))
-      // Aquí puedes hacer login con tu backend usando authentication.accessToken
     }
   }, [response])
-
-  const iniciarSesionConApple = async () => {
-    const result = await loginWithApple()
-    if (result) {
-      Alert.alert("Login con Apple exitoso", JSON.stringify(result))
-      // Puedes autenticar usando result.email o result.user
-    }
-  }
 
   const iniciarSesion = async () => {
     if (!email || !password) return Alert.alert("Completa ambos campos")
@@ -70,98 +65,103 @@ export default function LoginScreen({ navigation }: any) {
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
       <View style={styles.container}>
-        <Text style={styles.titulo}>Iniciar sesión</Text>
+        <Text style={[styles.titulo, { color: colors.texto }]}>
+          Iniciar sesión
+        </Text>
 
         <TextInput
+          style={[
+            styles.input,
+            { backgroundColor: colors.secundario, color: colors.texto },
+          ]}
           placeholder="Correo electrónico"
-          placeholderTextColor="#888"
-          style={styles.input}
+          placeholderTextColor={colors.gris}
           value={email}
           onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
         />
-
         <TextInput
+          style={[
+            styles.input,
+            { backgroundColor: colors.secundario, color: colors.texto },
+          ]}
           placeholder="Contraseña"
-          placeholderTextColor="#888"
-          style={styles.input}
+          placeholderTextColor={colors.gris}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
 
         <TouchableOpacity
-          style={styles.boton}
+          style={[styles.boton, { backgroundColor: colors.primario }]}
           onPress={iniciarSesion}
           disabled={cargando}
         >
-          <Text style={styles.botonTexto}>
-            {cargando ? "Entrando..." : "Entrar"}
-          </Text>
+          <Text style={styles.botonTexto}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.boton} onPress={() => promptAsync()}>
-          <Text style={styles.botonTexto}>Iniciar sesión con Google</Text>
+        <TouchableOpacity
+          style={[styles.botonSecundario, { backgroundColor: "#DB4437" }]}
+          onPress={() => promptAsync()}
+        >
+          <Text style={styles.botonTexto}>Entrar con Google</Text>
         </TouchableOpacity>
 
         {Platform.OS === "ios" && (
           <TouchableOpacity
-            style={[styles.boton, { backgroundColor: "#000" }]}
-            onPress={iniciarSesionConApple}
+            style={[styles.botonSecundario, { backgroundColor: "#000" }]}
+            onPress={loginWithApple}
           >
-            <Text style={styles.botonTexto}>Iniciar sesión con Apple</Text>
+            <Text style={styles.botonTexto}>Entrar con Apple</Text>
           </TouchableOpacity>
         )}
-
-        <View style={styles.enlace}>
-          <Text style={{ color: colors.texto }}>¿No tienes cuenta? </Text>
-          <Text
-            onPress={() => navigation.replace(ROUTES.REGISTER)}
-            style={{ color: colors.primario, fontWeight: "600" }}
-          >
-            Crea una aquí
+        <TouchableOpacity onPress={() => navigation.navigate(ROUTES.REGISTER)}>
+          <Text style={[styles.link, { color: colors.primario }]}>
+            ¿No tienes una cuenta? Regístrate
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 24 },
+  container: {
+    flex: 1,
+    paddingLeft: 24,
+    paddingRight: 24,
+    justifyContent: "center",
+  },
   titulo: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: colors.primario,
-    marginBottom: 30,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 24,
     textAlign: "center",
   },
   input: {
-    borderWidth: 1,
-    borderColor: colors.borde,
-    borderRadius: 10,
-    padding: 12,
+    height: 48,
+    borderRadius: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
     marginBottom: 16,
-    backgroundColor: "#fff",
-    fontSize: 16,
-    color: colors.texto,
   },
   boton: {
-    backgroundColor: colors.primario,
-    borderRadius: 10,
-    paddingVertical: 14,
+    paddingVertical: 16,
+    borderRadius: 8,
     alignItems: "center",
-    marginTop: 10,
+    marginBottom: 12,
+  },
+  botonSecundario: {
+    paddingVertical: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 12,
   },
   botonTexto: {
     color: "#fff",
-    fontWeight: "600",
-    fontSize: 16,
+    fontWeight: "bold",
   },
-  enlace: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 24,
+  link: {
+    textAlign: "center",
+    fontWeight: "600",
   },
 })

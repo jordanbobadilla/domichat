@@ -3,6 +3,8 @@ export const ROUTES = {
   MAIN_TABS: "MainTabs",
   WELCOME: "Welcome",
   VOZ_TUTORIAL: "VozTutorial",
+  CONFIGURACION: "Configuración",
+  SPLASH: "Splash",
 
   // Tabs
   CHAT: "Chat",

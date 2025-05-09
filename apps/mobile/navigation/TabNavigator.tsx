@@ -1,31 +1,35 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Ionicons } from "@expo/vector-icons"
 import { ROUTES } from "../constants/routes"
-import { colors } from "../constants/colors"
 import ChatScreen from "../screens/ChatScreen"
 import HistorialScreen from "../screens/HistorialScreen"
 import PerfilScreen from "../screens/PerfilScreen"
 import { Platform } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useContext } from "react"
+import { ThemeContext } from "../context/ThemeContext"
+import { temas } from "../constants/colors"
 
 const Tab = createBottomTabNavigator()
 
 export default function TabNavigator({ route }: any) {
   const { token, nombre } = route.params
   const insets = useSafeAreaInsets()
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: colors.primario,
-        tabBarInactiveTintColor: "#888",
+        tabBarInactiveTintColor: colors.gris,
         tabBarStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: colors.fondo,
           borderTopWidth: 1,
-          borderTopColor: colors.borde,
+          borderTopColor: colors.gris,
           elevation: 10,
-          height: 70 + insets.bottom, // <- Aumentamos dinámicamente
+          height: 70 + insets.bottom,
           paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
           paddingTop: 6,
           shadowColor: "#000",
@@ -51,21 +55,21 @@ export default function TabNavigator({ route }: any) {
         },
       })}
     >
-      <Tab.Screen name={ROUTES.CHAT} options={{ title: "Chat" }}>
-        {(props) => (
-          <ChatScreen {...props} route={{ params: { token, nombre } }} />
-        )}
-      </Tab.Screen>
-
-      <Tab.Screen name={ROUTES.HISTORIAL} options={{ title: "Historial" }}>
-        {(props) => (
-          <HistorialScreen {...props} route={{ params: { token } }} />
-        )}
-      </Tab.Screen>
-
-      <Tab.Screen name={ROUTES.PERFIL} options={{ title: "Perfil" }}>
-        {(props) => <PerfilScreen {...props} route={{ params: { nombre } }} />}
-      </Tab.Screen>
+      <Tab.Screen
+        name={ROUTES.CHAT}
+        component={ChatScreen}
+        initialParams={{ token, nombre }}
+      />
+      <Tab.Screen
+        name={ROUTES.HISTORIAL}
+        component={HistorialScreen}
+        initialParams={{ token }}
+      />
+      <Tab.Screen
+        name={ROUTES.PERFIL}
+        component={PerfilScreen}
+        initialParams={{ token, nombre }}
+      />
     </Tab.Navigator>
   )
 }

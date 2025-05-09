@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, useContext } from "react"
 import {
   View,
   Text,
@@ -10,12 +10,13 @@ import {
   Platform,
 } from "react-native"
 import { BASE_URL, getHistorial } from "../services/api"
-import { colors } from "../constants/colors"
 import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Speech from "expo-speech"
 import { generarTitulo } from "../utils/generarTitulo"
 import axios from "axios"
+import { ThemeContext } from "../context/ThemeContext"
+import { temas } from "../constants/colors"
 
 export default function ChatScreen({ route }: any) {
   const params = route?.params || {}
@@ -42,6 +43,9 @@ export default function ChatScreen({ route }: any) {
   const [cargando, setCargando] = useState(false)
   const scrollRef = useRef<ScrollView>(null)
   const [vozDominicana, setVozDominicana] = useState("popi")
+
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   useEffect(() => {
     if (!mensajePrevio && !respuestaPrevio && token) {
@@ -136,8 +140,10 @@ export default function ChatScreen({ route }: any) {
     >
       {historial.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyTitulo}>¡Bienvenido a DomiChat!</Text>
-          <Text style={styles.emptyTexto}>
+          <Text style={[styles.emptyTitulo, { color: colors.texto }]}>
+            ¡Bienvenido a DomiChat!
+          </Text>
+          <Text style={[styles.emptyTexto, { color: colors.gris }]}>
             Comienza escribiendo tu primera pregunta o mensaje.
           </Text>
         </View>
@@ -151,23 +157,34 @@ export default function ChatScreen({ route }: any) {
         >
           {historial.map((item, index) => (
             <View key={index}>
-              <View style={styles.mensajeUsuario}>
-                <Text style={styles.textoUsuario}>{item.mensaje}</Text>
+              <View
+                style={[styles.mensajeUsuario, { backgroundColor: "#DCF8C6" }]}
+              >
+                <Text style={{ color: "#000" }}>{item.mensaje}</Text>
               </View>
-              <View style={styles.mensajeBot}>
-                <Text style={styles.textoBot}>{item.respuesta}</Text>
+              <View
+                style={[
+                  styles.mensajeBot,
+                  { backgroundColor: colors.secundario },
+                ]}
+              >
+                <Text style={{ color: colors.texto }}>{item.respuesta}</Text>
               </View>
             </View>
           ))}
         </ScrollView>
       )}
 
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, { backgroundColor: colors.fondo }]}>
         <TextInput
           value={mensaje}
           onChangeText={setMensaje}
           placeholder="Escribe tu mensaje..."
-          style={styles.input}
+          placeholderTextColor={colors.gris}
+          style={[
+            styles.input,
+            { backgroundColor: colors.secundario, color: colors.texto },
+          ]}
         />
         <TouchableOpacity onPress={enviarMensaje} disabled={cargando}>
           <Ionicons name="send" size={24} color={colors.primario} />
@@ -186,25 +203,15 @@ const styles = StyleSheet.create({
   },
   mensajeUsuario: {
     alignSelf: "flex-end",
-    backgroundColor: "#DCF8C6",
     padding: 10,
     borderRadius: 10,
     marginBottom: 8,
   },
   mensajeBot: {
     alignSelf: "flex-start",
-    backgroundColor: "#FFF",
     padding: 10,
     borderRadius: 10,
     marginBottom: 8,
-  },
-  textoUsuario: {
-    fontSize: 16,
-    color: "#000",
-  },
-  textoBot: {
-    fontSize: 16,
-    color: "#000",
   },
   inputContainer: {
     position: "absolute",
@@ -213,12 +220,10 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: "row",
     padding: 12,
-    backgroundColor: "#fff",
     alignItems: "center",
   },
   input: {
     flex: 1,
-    backgroundColor: "#f2f2f2",
     borderRadius: 20,
     paddingLeft: 16,
     paddingRight: 16,
@@ -235,12 +240,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 12,
-    color: "#333",
     textAlign: "center",
   },
   emptyTexto: {
     fontSize: 14,
-    color: "#666",
     textAlign: "center",
     lineHeight: 20,
   },

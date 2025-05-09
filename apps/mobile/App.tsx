@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import StackNavigator from "./navigation/StackNavigator"
+import { ThemeProvider } from "./context/ThemeContext"
 
 export default function App() {
   const [cargando, setCargando] = useState(true)
@@ -20,5 +21,9 @@ export default function App() {
 
   if (cargando) return null
 
-  return <StackNavigator token={token} nombre={nombre} />
+  return (
+    <ThemeProvider>
+      <StackNavigator token={token} nombre={nombre} />
+    </ThemeProvider>
+  )
 }

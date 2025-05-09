@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import {
   View,
   Text,
@@ -10,19 +10,23 @@ import {
   Platform,
 } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { registrarUsuario } from "../services/api"
 import { ROUTES } from "../constants/routes"
-import { colors } from "../constants/colors"
+import { registrarUsuario } from "../services/api"
+import { ThemeContext } from "../context/ThemeContext"
+import { temas } from "../constants/colors"
 
 export default function RegisterScreen({ navigation }: any) {
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
+
   const [nombre, setNombre] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [cargando, setCargando] = useState(false)
 
-  const manejarRegistro = async () => {
+  const registrar = async () => {
     if (!nombre || !email || !password) {
-      return Alert.alert("Por favor completa todos los campos")
+      return Alert.alert("Completa todos los campos")
     }
 
     try {
@@ -31,18 +35,14 @@ export default function RegisterScreen({ navigation }: any) {
 
       await AsyncStorage.setItem("token", res.token)
       await AsyncStorage.setItem("nombre", res.usuario.nombre)
+      await AsyncStorage.setItem("email", res.usuario.email)
 
       navigation.reset({
         index: 0,
-        routes: [
-          {
-            name: ROUTES.MAIN_TABS,
-            params: { token: res.token, nombre: res.usuario.nombre },
-          },
-        ],
+        routes: [{ name: ROUTES.MAIN_TABS, params: { token: res.token } }],
       })
     } catch (err: any) {
-      Alert.alert("Error", err.message)
+      Alert.alert("Error al registrarse", err.message)
     } finally {
       setCargando(false)
     }
@@ -54,91 +54,92 @@ export default function RegisterScreen({ navigation }: any) {
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
       <View style={styles.container}>
-        <Text style={styles.titulo}>Crear cuenta</Text>
+        <Text style={[styles.titulo, { color: colors.texto }]}>
+          Crear cuenta
+        </Text>
 
         <TextInput
+          style={[
+            styles.input,
+            { backgroundColor: colors.secundario, color: colors.texto },
+          ]}
           placeholder="Nombre completo"
-          placeholderTextColor="#888"
-          style={styles.input}
+          placeholderTextColor={colors.gris}
           value={nombre}
           onChangeText={setNombre}
         />
         <TextInput
+          style={[
+            styles.input,
+            { backgroundColor: colors.secundario, color: colors.texto },
+          ]}
           placeholder="Correo electrónico"
-          placeholderTextColor="#888"
-          style={styles.input}
+          placeholderTextColor={colors.gris}
           value={email}
           onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
         />
         <TextInput
+          style={[
+            styles.input,
+            { backgroundColor: colors.secundario, color: colors.texto },
+          ]}
           placeholder="Contraseña"
-          placeholderTextColor="#888"
-          style={styles.input}
+          placeholderTextColor={colors.gris}
+          secureTextEntry
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
         />
 
         <TouchableOpacity
-          style={styles.boton}
-          onPress={manejarRegistro}
+          style={[styles.boton, { backgroundColor: colors.primario }]}
+          onPress={registrar}
           disabled={cargando}
         >
-          <Text style={styles.botonTexto}>
-            {cargando ? "Registrando..." : "Registrarse"}
-          </Text>
+          <Text style={styles.botonTexto}>Registrarse</Text>
         </TouchableOpacity>
 
-        <View style={styles.enlace}>
-          <Text style={{ color: colors.texto }}>¿Ya tienes cuenta? </Text>
-          <Text
-            onPress={() => navigation.replace(ROUTES.LOGIN)}
-            style={{ color: colors.primario, fontWeight: "600" }}
-          >
-            Inicia sesión
+        <TouchableOpacity onPress={() => navigation.navigate(ROUTES.LOGIN)}>
+          <Text style={[styles.link, { color: colors.primario }]}>
+            ¿Ya tienes una cuenta? Inicia sesión
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 24 },
+  container: {
+    flex: 1,
+    paddingLeft: 24,
+    paddingRight: 24,
+    justifyContent: "center",
+  },
   titulo: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: colors.primario,
-    marginBottom: 30,
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 24,
     textAlign: "center",
   },
   input: {
-    borderWidth: 1,
-    borderColor: colors.borde,
-    borderRadius: 10,
-    padding: 12,
+    height: 48,
+    borderRadius: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
     marginBottom: 16,
-    backgroundColor: "#fff",
-    fontSize: 16,
-    color: colors.texto,
   },
   boton: {
-    backgroundColor: colors.primario,
-    borderRadius: 10,
-    paddingVertical: 14,
+    paddingVertical: 16,
+    borderRadius: 8,
     alignItems: "center",
-    marginTop: 10,
+    marginBottom: 16,
   },
   botonTexto: {
     color: "#fff",
-    fontWeight: "600",
-    fontSize: 16,
+    fontWeight: "bold",
   },
-  enlace: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 24,
+  link: {
+    textAlign: "center",
+    fontWeight: "600",
   },
 })
