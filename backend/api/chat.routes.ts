@@ -8,7 +8,7 @@ import prisma from "../db/prisma"
 import OpenAI from "openai"
 
 const router = express.Router()
-const THRESHOLD = 0.1 // umbral de similitud para RAG
+const THRESHOLD = 0.9 // umbral de similitud para RAG
 let datasetCargado = false
 
 // Cliente OpenAI
@@ -44,7 +44,6 @@ router.post("/", autenticarToken, async (req, res) => {
       })
 
       res.json({ respuesta: respLocal, fuente: "dataset", score })
-      return
     }
 
     // 3) Si no hay buen match, fallback a GPT-4 Turbo

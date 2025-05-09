@@ -5,22 +5,21 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  TouchableOpacity,
+  Alert,
 } from "react-native"
-import { getHistorial } from "../services/api"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { colors } from "../constants/colors"
 
-export default function HistorialScreen({ route }: any) {
-  const { token } = route.params
-  const [historial, setHistorial] = useState<
-    { mensaje: string; respuesta: string; creadoEn: string }[]
-  >([])
+export default function HistorialScreen({ navigation }: any) {
+  const [historial, setHistorial] = useState<any[]>([])
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
-    async function cargarHistorial() {
+    const cargarHistorial = async () => {
       try {
-        const data = await getHistorial(token)
-        setHistorial(data.historial)
+        const data = await AsyncStorage.getItem("historial")
+        if (data) setHistorial(JSON.parse(data))
       } catch (error) {
         console.error("Error cargando historial", error)
       } finally {
@@ -30,6 +29,38 @@ export default function HistorialScreen({ route }: any) {
 
     cargarHistorial()
   }, [])
+
+  const eliminarHistorial = (id: string) => {
+    Alert.alert(
+      "¿Eliminar chat?",
+      "¿Estás seguro de que quieres eliminar esta conversación del historial?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Eliminar",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              const prev = await AsyncStorage.getItem("historial")
+              if (prev) {
+                const data = JSON.parse(prev)
+                const nuevoHistorial = data.filter(
+                  (item: any) => item.id !== id
+                )
+                setHistorial(nuevoHistorial)
+                await AsyncStorage.setItem(
+                  "historial",
+                  JSON.stringify(nuevoHistorial)
+                )
+              }
+            } catch (error) {
+              console.error("Error eliminando historial", error)
+            }
+          },
+        },
+      ]
+    )
+  }
 
   if (cargando) {
     return (
@@ -55,15 +86,31 @@ export default function HistorialScreen({ route }: any) {
   return (
     <ScrollView style={styles.container}>
       {historial.map((item, i) => (
-        <View key={i} style={styles.card}>
+        <TouchableOpacity
+          key={item.id}
+          style={styles.card}
+          onPress={async () => {
+            const token = await AsyncStorage.getItem("token")
+            navigation.navigate("ChatScreen", {
+              token,
+              mensajePrevio: item.mensajes[0]?.mensaje,
+              respuestaPrevio: item.mensajes[0]?.respuesta,
+            })
+          }}
+        >
+          <Text style={styles.titulo}>{item.titulo}</Text>
           <Text style={styles.fecha}>
-            {new Date(item.creadoEn).toLocaleString()}
+            {new Date(item.fecha).toLocaleDateString()}{" "}
+            {new Date(item.fecha).toLocaleTimeString()}
           </Text>
-          <Text style={styles.usuario}>🧑 Tú:</Text>
-          <Text style={styles.mensaje}>{item.mensaje}</Text>
-          <Text style={styles.bot}>🤖 DomiChat:</Text>
-          <Text style={styles.respuesta}>{item.respuesta}</Text>
-        </View>
+
+          <TouchableOpacity
+            style={styles.botonEliminar}
+            onPress={() => eliminarHistorial(item.id)}
+          >
+            <Text style={styles.textoEliminar}>Eliminar</Text>
+          </TouchableOpacity>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   )
@@ -71,46 +118,44 @@ export default function HistorialScreen({ route }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    paddingTop: 64,
-    backgroundColor: colors.fondo,
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 24,
+    backgroundColor: "#fff",
   },
   card: {
-    backgroundColor: "#fff",
-    padding: 14,
-    borderRadius: 10,
+    padding: 16,
     marginBottom: 16,
-    borderColor: colors.borde,
-    borderWidth: 1,
+    backgroundColor: "#f2f2f2",
+    borderRadius: 10,
   },
-  usuario: {
-    fontWeight: "600",
-    color: colors.primario,
-    marginTop: 5,
-  },
-  bot: {
-    fontWeight: "600",
-    color: colors.texto,
-    marginTop: 8,
-  },
-  mensaje: {
-    color: colors.texto,
-    marginBottom: 4,
-  },
-  respuesta: {
-    color: "#444",
-    marginBottom: 2,
+  titulo: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
   },
   fecha: {
     fontSize: 12,
-    color: "#888",
-    marginBottom: 4,
+    color: "#666",
+    marginTop: 4,
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.fondo,
+    backgroundColor: "#fff",
+  },
+  botonEliminar: {
+    marginTop: 10,
+    backgroundColor: "#ff4d4d",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+  },
+  textoEliminar: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 12,
   },
 })

@@ -14,6 +14,8 @@ import { colors } from "../constants/colors"
 import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Speech from "expo-speech"
+import { generarTitulo } from "../utils/generarTitulo"
+import axios from "axios"
 
 export default function ChatScreen({ route }: any) {
   const { token, nombre, mensajePrevio, respuestaPrevio } = route.params
@@ -47,73 +49,69 @@ export default function ChatScreen({ route }: any) {
     })
   }, [])
 
+  const reproducirVoz = (texto: string) => {
+    let opciones: Speech.SpeechOptions = {
+      language: "es-DO",
+      rate: 0.9,
+    }
+    Speech.speak(texto, opciones)
+  }
+
+  const guardarNuevoHistorial = async (mensajes: any[]) => {
+    const nuevo = {
+      id: Date.now().toString(),
+      titulo: generarTitulo(
+        mensajes.map((m) => ({ rol: "usuario", texto: m.mensaje }))
+      ),
+      fecha: new Date().toISOString(),
+      mensajes,
+    }
+
+    try {
+      const prev = await AsyncStorage.getItem("historial")
+      const historial = prev ? JSON.parse(prev) : []
+      historial.unshift(nuevo)
+      await AsyncStorage.setItem("historial", JSON.stringify(historial))
+    } catch (err) {
+      console.error("Error guardando historial", err)
+    }
+  }
+
   const enviarMensaje = async () => {
     if (!mensaje.trim()) return
 
     try {
       setCargando(true)
-
-      const res = await fetch(`${BASE_URL}/chat`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ mensaje }),
-      })
-
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || "Error en el servidor")
-      }
-
-      const data = await res.json()
-
-      // Modifica la respuesta escrita
-      const textoAdaptado = modificarRespuestaSegunVoz(
-        data.respuesta,
-        vozDominicana
+      const res = await axios.post(
+        `${BASE_URL}/chat`,
+        { mensaje, historial },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
 
-      // Agrega al historial
-      setHistorial([
+      const nuevaRespuesta = res.data.respuesta
+      const nuevoHistorial = [
         ...historial,
         {
           mensaje,
-          respuesta: textoAdaptado,
+          respuesta: nuevaRespuesta,
           creadoEn: new Date().toISOString(),
         },
-      ])
-
-      // ¡Habla!
-      Speech.speak(textoAdaptado, { rate: 1.0 })
-
+      ]
+      setHistorial(nuevoHistorial)
       setMensaje("")
-      scrollRef.current?.scrollToEnd({ animated: true })
+      reproducirVoz(nuevaRespuesta)
+
+      if (historial.length === 0) {
+        guardarNuevoHistorial(nuevoHistorial)
+      }
     } catch (err) {
       console.error(err)
     } finally {
       setCargando(false)
-    }
-  }
-
-  const modificarRespuestaSegunVoz = (texto: string, voz: string) => {
-    switch (voz) {
-      case "popi":
-        return texto // voz formal con acento neutral
-      case "wawawa":
-        return texto
-          .replace(/¿/g, "")
-          .replace(/\?/g, "")
-          .replace(/s /g, " e ")
-          .replace(/tú/g, "tú men")
-          .replace(/\./g, " loco.")
-      case "cibaeña":
-        return texto.replace(/r\b/g, "i").replace(/l\b/g, "i")
-      case "sureña":
-        return texto.replace(/s/g, "h").replace(/r\b/g, "l")
-      default:
-        return texto
     }
   }
 
@@ -122,148 +120,86 @@ export default function ChatScreen({ route }: any) {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
-      <View style={styles.container}>
-        <Text style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</Text>
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={styles.chatContainer}
+        onContentSizeChange={() =>
+          scrollRef.current?.scrollToEnd({ animated: true })
+        }
+      >
+        {historial.map((item, index) => (
+          <View key={index}>
+            <View style={styles.mensajeUsuario}>
+              <Text style={styles.textoUsuario}>{item.mensaje}</Text>
+            </View>
+            <View style={styles.mensajeBot}>
+              <Text style={styles.textoBot}>{item.respuesta}</Text>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
 
-        <ScrollView
-          ref={scrollRef}
-          style={styles.chat}
-          contentContainerStyle={{ paddingBottom: 20 }}
-        >
-          {historial.map((item, i) => {
-            const esPar = i % 2 === 0
-
-            return (
-              <View key={i} style={{ marginBottom: 12 }}>
-                {/* Mensaje del usuario */}
-                <View
-                  style={[
-                    styles.mensajeUsuario,
-                    {
-                      backgroundColor: esPar
-                        ? colors.primario
-                        : colors.secundario,
-                      alignSelf: "flex-end",
-                    },
-                  ]}
-                >
-                  <Text style={styles.textoUsuario}>{item.mensaje}</Text>
-                </View>
-
-                {/* Respuesta de DomiChat */}
-                <View
-                  style={[
-                    styles.mensajeBot,
-                    {
-                      backgroundColor: "#fff",
-                      alignSelf: "flex-start",
-                    },
-                  ]}
-                >
-                  <Text style={styles.textoBot}>{item.respuesta}</Text>
-                </View>
-              </View>
-            )
-          })}
-        </ScrollView>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Escribe tu mensaje..."
-            placeholderTextColor="#888"
-            value={mensaje}
-            onChangeText={setMensaje}
-          />
-          <TouchableOpacity
-            style={styles.boton}
-            onPress={enviarMensaje}
-            disabled={cargando}
-          >
-            <Ionicons name="send" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          value={mensaje}
+          onChangeText={setMensaje}
+          placeholder="Escribe tu mensaje..."
+          style={styles.input}
+        />
+        <TouchableOpacity onPress={enviarMensaje} disabled={cargando}>
+          <Ionicons name="send" size={24} color={colors.primario} />
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 64,
-    paddingBottom: 16,
+  chatContainer: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 24,
+    paddingBottom: 100,
   },
-  titulo: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: colors.primario,
-    marginBottom: 10,
-  },
-  chat: { flex: 1, marginBottom: 10 },
-  mensajeCard: {
-    backgroundColor: "#fff",
-    padding: 12,
+  mensajeUsuario: {
+    alignSelf: "flex-end",
+    backgroundColor: "#DCF8C6",
+    padding: 10,
     borderRadius: 10,
-    marginBottom: 12,
-    borderColor: colors.borde,
-    borderWidth: 1,
+    marginBottom: 8,
   },
-  usuario: {
-    fontWeight: "600",
-    color: colors.primario,
-    marginTop: 5,
+  mensajeBot: {
+    alignSelf: "flex-start",
+    backgroundColor: "#FFF",
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 8,
   },
-  texto: {
-    fontSize: 15,
-    color: colors.texto,
-    marginBottom: 5,
+  textoUsuario: {
+    fontSize: 16,
+    color: "#000",
+  },
+  textoBot: {
+    fontSize: 16,
+    color: "#000",
   },
   inputContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
+    padding: 12,
+    backgroundColor: "#fff",
     alignItems: "center",
-    borderTopColor: colors.borde,
-    borderTopWidth: 1,
-    paddingTop: 8,
   },
   input: {
     flex: 1,
-    borderColor: colors.borde,
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    backgroundColor: "#fff",
-    fontSize: 16,
-    color: colors.texto,
+    backgroundColor: "#f2f2f2",
+    borderRadius: 20,
+    paddingLeft: 16,
+    paddingRight: 16,
+    height: 40,
     marginRight: 8,
-  },
-  boton: {
-    backgroundColor: colors.primario,
-    padding: 12,
-    borderRadius: 10,
-  },
-  mensajeUsuario: {
-    maxWidth: "80%",
-    padding: 12,
-    borderRadius: 12,
-    borderTopRightRadius: 0,
-  },
-  mensajeBot: {
-    maxWidth: "80%",
-    padding: 12,
-    borderRadius: 12,
-    borderTopLeftRadius: 0,
-    borderWidth: 1,
-    borderColor: colors.borde,
-  },
-  textoUsuario: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "500",
-  },
-  textoBot: {
-    color: colors.texto,
-    fontSize: 15,
   },
 })
