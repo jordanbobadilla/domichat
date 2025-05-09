@@ -21,10 +21,8 @@ export default function ChatScreen({ route }: any) {
   const { token, nombre, mensajePrevio, respuestaPrevio } = route.params
 
   const [mensaje, setMensaje] = useState("")
-  const [historial, setHistorial] = useState<
-    { mensaje: string; respuesta: string; creadoEn: string }[]
-  >(
-    mensajePrevio && respuestaPrevio
+  const historialInicial =
+    typeof mensajePrevio === "string" && typeof respuestaPrevio === "string"
       ? [
           {
             mensaje: mensajePrevio,
@@ -33,7 +31,8 @@ export default function ChatScreen({ route }: any) {
           },
         ]
       : []
-  )
+
+  const [historial, setHistorial] = useState(historialInicial)
   const [cargando, setCargando] = useState(false)
   const scrollRef = useRef<ScrollView>(null)
   const [vozDominicana, setVozDominicana] = useState("popi")
@@ -120,24 +119,33 @@ export default function ChatScreen({ route }: any) {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={styles.chatContainer}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
-        }
-      >
-        {historial.map((item, index) => (
-          <View key={index}>
-            <View style={styles.mensajeUsuario}>
-              <Text style={styles.textoUsuario}>{item.mensaje}</Text>
+      {historial.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyTitulo}>¡Bienvenido a DomiChat!</Text>
+          <Text style={styles.emptyTexto}>
+            Comienza escribiendo tu primera pregunta o mensaje.
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={styles.chatContainer}
+          onContentSizeChange={() =>
+            scrollRef.current?.scrollToEnd({ animated: true })
+          }
+        >
+          {historial.map((item, index) => (
+            <View key={index}>
+              <View style={styles.mensajeUsuario}>
+                <Text style={styles.textoUsuario}>{item.mensaje}</Text>
+              </View>
+              <View style={styles.mensajeBot}>
+                <Text style={styles.textoBot}>{item.respuesta}</Text>
+              </View>
             </View>
-            <View style={styles.mensajeBot}>
-              <Text style={styles.textoBot}>{item.respuesta}</Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
+      )}
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -201,5 +209,24 @@ const styles = StyleSheet.create({
     paddingRight: 16,
     height: 40,
     marginRight: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+  },
+  emptyTitulo: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 12,
+    color: "#333",
+    textAlign: "center",
+  },
+  emptyTexto: {
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
+    lineHeight: 20,
   },
 })
