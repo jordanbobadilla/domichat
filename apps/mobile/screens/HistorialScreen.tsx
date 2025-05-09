@@ -28,7 +28,7 @@ export default function HistorialScreen({ navigation }: any) {
         const token = await AsyncStorage.getItem("token")
 
         if (token) {
-          const res = await axios.get(`${BASE_URL}/historial`, {
+          const res = await axios.get(`${BASE_URL}/chat/historial`, {
             headers: { Authorization: `Bearer ${token}` },
           })
 
@@ -68,7 +68,7 @@ export default function HistorialScreen({ navigation }: any) {
               const token = await AsyncStorage.getItem("token")
 
               if (token) {
-                await axios.delete(`${BASE_URL}/historial/${id}`, {
+                await axios.delete(`${BASE_URL}/chat/historial/${id}`, {
                   headers: { Authorization: `Bearer ${token}` },
                 })
               }
@@ -110,7 +110,7 @@ export default function HistorialScreen({ navigation }: any) {
               // 🔁 Eliminar en el backend también
               const token = await AsyncStorage.getItem("token")
               if (token) {
-                await axios.delete(`${BASE_URL}/historial/todo`, {
+                await axios.delete(`${BASE_URL}/chat/historial/todo`, {
                   headers: { Authorization: `Bearer ${token}` },
                 })
               }
@@ -146,7 +146,7 @@ export default function HistorialScreen({ navigation }: any) {
       // 🔁 Actualizar en el backend
       if (token) {
         await axios.put(
-          `${BASE_URL}/historial/${chatIdEditando}`,
+          `${BASE_URL}/chat/historial/${chatIdEditando}`,
           { nuevoTitulo: tituloEditando },
           { headers: { Authorization: `Bearer ${token}` } }
         )

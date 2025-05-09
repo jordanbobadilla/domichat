@@ -18,11 +18,16 @@ import { generarTitulo } from "../utils/generarTitulo"
 import axios from "axios"
 
 export default function ChatScreen({ route }: any) {
-  const { token, nombre, mensajePrevio, respuestaPrevio } = route.params
+  const params = route?.params || {}
+  const {
+    token = null,
+    nombre = "",
+    mensajePrevio = "",
+    respuestaPrevio = "",
+  } = params
 
-  const [mensaje, setMensaje] = useState("")
   const historialInicial =
-    typeof mensajePrevio === "string" && typeof respuestaPrevio === "string"
+    mensajePrevio && respuestaPrevio
       ? [
           {
             mensaje: mensajePrevio,
@@ -32,17 +37,19 @@ export default function ChatScreen({ route }: any) {
         ]
       : []
 
+  const [mensaje, setMensaje] = useState("")
   const [historial, setHistorial] = useState(historialInicial)
   const [cargando, setCargando] = useState(false)
   const scrollRef = useRef<ScrollView>(null)
   const [vozDominicana, setVozDominicana] = useState("popi")
 
   useEffect(() => {
-    if (!mensajePrevio && !respuestaPrevio) {
+    if (!mensajePrevio && !respuestaPrevio && token) {
       getHistorial(token)
-        .then((data) => setHistorial(data.historial))
+        .then((data) => setHistorial(data.historial || []))
         .catch(console.error)
     }
+
     AsyncStorage.getItem("voz_dominicana").then((voz) => {
       if (voz) setVozDominicana(voz)
     })
@@ -68,9 +75,17 @@ export default function ChatScreen({ route }: any) {
 
     try {
       const prev = await AsyncStorage.getItem("historial")
-      const historial = prev ? JSON.parse(prev) : []
-      historial.unshift(nuevo)
-      await AsyncStorage.setItem("historial", JSON.stringify(historial))
+      const historialLocal = prev ? JSON.parse(prev) : []
+      historialLocal.unshift(nuevo)
+      await AsyncStorage.setItem("historial", JSON.stringify(historialLocal))
+
+      if (token) {
+        await axios.post(
+          `${BASE_URL}/guardar-historial`,
+          { titulo: nuevo.titulo, fecha: nuevo.fecha, mensajes },
+          { headers: { Authorization: `Bearer ${token}` } }
+        )
+      }
     } catch (err) {
       console.error("Error guardando historial", err)
     }
