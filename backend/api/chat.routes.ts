@@ -77,18 +77,65 @@ router.post("/", autenticarToken, async (req, res) => {
   }
 })
 
+// Obtener historial del usuario logueado
 router.get("/historial", autenticarToken, async (req, res) => {
+  const userId = (req as any).usuario.id
+
   try {
-    const userId = (req as any).usuario.id
-    const historial = await prisma.chat.findMany({
+    const historial = await prisma.historial.findMany({
       where: { usuarioId: userId },
-      orderBy: { creadoEn: "asc" },
-      select: { mensaje: true, respuesta: true, creadoEn: true },
+      orderBy: { fecha: "desc" },
     })
-    res.json({ historial })
-  } catch (err: any) {
-    console.error("Error obteniendo historial:", err)
-    res.status(500).json({ error: "No se pudo obtener el historial." })
+
+    res.json(historial)
+  } catch (error) {
+    console.error("Error al obtener historial:", error)
+    res.status(500).json({ error: "Error al obtener historial" })
+  }
+})
+
+router.put("/historial/:id", autenticarToken, async (req, res) => {
+  const { id } = req.params
+  const { nuevoTitulo } = req.body
+  const userId = (req as any).usuario.id
+
+  try {
+    const actualizado = await prisma.historial.updateMany({
+      where: { id, usuarioId: userId },
+      data: { titulo: nuevoTitulo },
+    })
+    res.json(actualizado)
+  } catch (error) {
+    res.status(500).json({ error: "Error al renombrar historial" })
+  }
+})
+
+router.delete("/historial/:id", autenticarToken, async (req, res) => {
+  const { id } = req.params
+  const userId = (req as any).usuario.id
+
+  try {
+    await prisma.historial.deleteMany({
+      where: { id, usuarioId: userId },
+    })
+    res.json({ eliminado: true })
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar historial" })
+  }
+})
+
+// Eliminar TODO el historial del usuario
+router.delete("/historial/todo", autenticarToken, async (req, res) => {
+  const userId = (req as any).usuario.id
+
+  try {
+    await prisma.historial.deleteMany({
+      where: { usuarioId: userId },
+    })
+    res.json({ eliminado: true })
+  } catch (error) {
+    console.error("Error al eliminar todo el historial:", error)
+    res.status(500).json({ error: "Error al eliminar todo el historial" })
   }
 })
 

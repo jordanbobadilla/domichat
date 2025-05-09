@@ -15,6 +15,7 @@ model Usuario {
   suscripcion    Suscripcion?
   chats          Chat[]
   creadoEn       DateTime  @default(now())
+  historial      Historial[]
 }
 
 model Suscripcion {
@@ -33,3 +34,13 @@ model Chat {
   respuesta      String
   creadoEn       DateTime @default(now())
 }
+
+model Historial {
+  id         String   @id @default(cuid())
+  titulo     String
+  fecha      DateTime
+  mensajes   Json
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId  String
+}
+
