@@ -17,6 +17,7 @@ import { generarTitulo } from "../utils/generarTitulo"
 import axios from "axios"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
+import Header from "../components/Header"
 
 export default function ChatScreen({ route }: any) {
   const params = route?.params || {}
@@ -139,6 +140,7 @@ export default function ChatScreen({ route }: any) {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 80}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
+      <Header titulo="Chat" />
       {historial.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={[styles.emptyTitulo, { color: colors.texto }]}>
