@@ -13,6 +13,7 @@ interface EstadoSuscripcion {
 export default function Perfil() {
   const router = useRouter()
   const [nombre, setNombre] = useState("")
+  const [email, setEmail] = useState("")
   const [token, setToken] = useState("")
   const [estado, setEstado] = useState<EstadoSuscripcion | null>(null)
 
@@ -22,6 +23,7 @@ export default function Perfil() {
 
     setToken(sesion.token)
     setNombre(sesion.nombre)
+    if (sesion.email) setEmail(sesion.email)
 
     axios
       .get("http://localhost:4000/api/subscription/estado", {
@@ -34,6 +36,7 @@ export default function Perfil() {
   const cerrarSesion = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("nombre")
+    localStorage.removeItem("email")
     router.push("/login")
   }
 
@@ -41,26 +44,42 @@ export default function Perfil() {
     <>
       <Header />
       <div style={styles.wrapper}>
-        <h2 style={styles.titulo}>👤 {nombre}</h2>
-
-        {estado ? (
-          estado.activa ? (
-            <p style={styles.activa}>
-              ✅ Suscripción activa hasta el{" "}
-              {new Date(estado.expiracion!).toLocaleDateString()}
-            </p>
-          ) : (
-            <p style={styles.inactiva}>🚫 No tienes una suscripción activa</p>
-          )
-        ) : (
-          <p style={{ color: colors.texto }}>
-            Cargando estado de suscripción...
+        <div style={styles.card}>
+          <div style={styles.avatar}>{nombre.charAt(0).toUpperCase()}</div>
+          <h2 style={styles.titulo}>{nombre}</h2>
+          {email && <p style={styles.email}>{email}</p>}
+          <p style={styles.bio}>
+            Apasionado por la tecnología y la cultura dominicana.
           </p>
-        )}
+          <p style={styles.info}>📍 Santo Domingo, RD</p>
+          <p style={styles.info}>Miembro desde 2025</p>
 
-        <button style={styles.boton} onClick={cerrarSesion}>
-          Cerrar sesión
-        </button>
+          {estado ? (
+            estado.activa ? (
+              <p style={styles.activa}>
+                Suscripción activa hasta el{" "}
+                {new Date(estado.expiracion!).toLocaleDateString()}
+              </p>
+            ) : (
+              <p style={styles.inactiva}>No tienes una suscripción activa</p>
+            )
+          ) : (
+            <p style={{ color: colors.texto }}>
+              Cargando estado de suscripción...
+            </p>
+          )}
+
+          <button
+            style={styles.botonSecundario}
+            onClick={() => router.push("/configuracion")}
+          >
+            Configuración de DomiChat
+          </button>
+
+          <button style={styles.boton} onClick={cerrarSesion}>
+            Cerrar sesión
+          </button>
+        </div>
       </div>
     </>
   )
@@ -75,11 +94,46 @@ const styles: { [key: string]: React.CSSProperties } = {
     paddingRight: 16,
     textAlign: "center",
   },
-  titulo: {
-    fontSize: 24,
-    color: colors.primario,
-    marginBottom: 30,
+  card: {
+    backgroundColor: "#fff",
+    border: `1px solid ${colors.borde}`,
+    borderRadius: 12,
+    padding: 24,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: "50%",
+    backgroundColor: colors.primario,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#fff",
+    fontSize: 32,
     fontWeight: 700,
+    margin: "0 auto 20px",
+  },
+  titulo: {
+    fontSize: 22,
+    color: colors.primario,
+    marginBottom: 20,
+    fontWeight: 700,
+  },
+  email: {
+    color: colors.texto,
+    marginBottom: 8,
+    fontSize: 14,
+  },
+  bio: {
+    color: colors.texto,
+    marginBottom: 12,
+    fontSize: 14,
+  },
+  info: {
+    color: colors.texto,
+    marginBottom: 8,
+    fontSize: 14,
   },
   activa: {
     color: colors.exito,
@@ -100,5 +154,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: 600,
     cursor: "pointer",
     fontSize: 16,
+  },
+  botonSecundario: {
+    backgroundColor: colors.primario,
+    color: "#fff",
+    padding: "12px 20px",
+    border: "none",
+    borderRadius: 10,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontSize: 16,
+    marginBottom: 12,
   },
 }

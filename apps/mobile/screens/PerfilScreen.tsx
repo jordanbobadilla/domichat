@@ -73,49 +73,47 @@ export default function PerfilScreen({ route, navigation }: any) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.fondo }]}>
-      {foto ? (
-        <Image source={{ uri: foto }} style={styles.avatar} />
-      ) : (
-        <View
-          style={[styles.avatarPlaceholder, { backgroundColor: colors.gris }]}
-        >
-          <Text style={styles.avatarInicial}>{nombre.charAt(0)}</Text>
-        </View>
-      )}
-
-      <Text style={[styles.nombre, { color: colors.texto }]}>{nombre}</Text>
-      {email ? (
-        <Text style={[styles.email, { color: colors.gris }]}>{email}</Text>
-      ) : null}
-
-      <View style={styles.suscripcionBox}>
-        <Text style={[styles.subTitulo, { color: colors.texto }]}>
-          Estado de suscripción
-        </Text>
-        {suscripcion?.activa ? (
-          <Text style={{ color: colors.exito }}>
-            Activa hasta {suscripcion.expiracion}
-          </Text>
+      <View style={styles.card}>
+        {foto ? (
+          <Image source={{ uri: foto }} style={styles.avatar} />
         ) : (
-          <Text style={{ color: colors.peligro }}>
-            No tienes suscripción activa
-          </Text>
+          <View
+            style={[styles.avatarPlaceholder, { backgroundColor: colors.primario }]}
+          >
+            <Text style={styles.avatarInicial}>{nombre.charAt(0)}</Text>
+          </View>
         )}
+
+        <Text style={[styles.nombre, { color: colors.texto }]}>{nombre}</Text>
+        {email ? (
+          <Text style={[styles.email, { color: colors.gris }]}>{email}</Text>
+        ) : null}
+
+        <View style={styles.suscripcionBox}>
+          <Text style={[styles.subTitulo, { color: colors.texto }]}>Estado de suscripción</Text>
+          {suscripcion?.activa ? (
+            <Text style={{ color: colors.exito }}>
+              Activa hasta {suscripcion.expiracion}
+            </Text>
+          ) : (
+            <Text style={{ color: colors.peligro }}>No tienes suscripción activa</Text>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={[styles.botonSecundario, { backgroundColor: colors.primario }]}
+          onPress={() => navigation.navigate("Configuracion")}
+        >
+          <Text style={styles.botonTexto}>Configuración de DomiChat</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.botonCerrar, { backgroundColor: colors.peligro }]}
+          onPress={cerrarSesion}
+        >
+          <Text style={styles.botonTexto}>Cerrar sesión</Text>
+        </TouchableOpacity>
       </View>
-
-      <TouchableOpacity
-        style={[styles.botonSecundario, { backgroundColor: colors.primario }]}
-        onPress={() => navigation.navigate("Configuracion")}
-      >
-        <Text style={styles.botonTexto}>Configuración de DomiChat</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.botonCerrar, { backgroundColor: colors.peligro }]}
-        onPress={cerrarSesion}
-      >
-        <Text style={styles.botonTexto}>Cerrar sesión</Text>
-      </TouchableOpacity>
     </View>
   )
 }
@@ -128,6 +126,18 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     paddingLeft: 24,
     paddingRight: 24,
+  },
+  card: {
+    width: "100%",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 24,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   centered: {
     flex: 1,
@@ -155,6 +165,7 @@ const styles = StyleSheet.create({
   nombre: {
     fontSize: 20,
     fontWeight: "bold",
+    marginBottom: 4,
   },
   email: {
     fontSize: 14,
