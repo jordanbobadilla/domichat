@@ -11,10 +11,10 @@ export default function Header({ titulo }: { titulo: string }) {
     <View
       style={[
         styles.container,
-        { backgroundColor: colors.fondo, borderBottomColor: colors.borde },
+        { backgroundColor: colors.primario, borderBottomColor: colors.primario },
       ]}
     >
-      <Text style={[styles.titulo, { color: colors.texto }]}>{titulo}</Text>
+      <Text style={[styles.titulo, { color: "#fff" }]}>{titulo}</Text>
     </View>
   )
 }
