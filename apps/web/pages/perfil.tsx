@@ -41,26 +41,29 @@ export default function Perfil() {
     <>
       <Header />
       <div style={styles.wrapper}>
-        <h2 style={styles.titulo}>👤 {nombre}</h2>
+        <div style={styles.card}>
+          <div style={styles.avatar}>{nombre.charAt(0).toUpperCase()}</div>
+          <h2 style={styles.titulo}>{nombre}</h2>
 
-        {estado ? (
-          estado.activa ? (
-            <p style={styles.activa}>
-              ✅ Suscripción activa hasta el{" "}
-              {new Date(estado.expiracion!).toLocaleDateString()}
-            </p>
+          {estado ? (
+            estado.activa ? (
+              <p style={styles.activa}>
+                Suscripción activa hasta el{" "}
+                {new Date(estado.expiracion!).toLocaleDateString()}
+              </p>
+            ) : (
+              <p style={styles.inactiva}>No tienes una suscripción activa</p>
+            )
           ) : (
-            <p style={styles.inactiva}>🚫 No tienes una suscripción activa</p>
-          )
-        ) : (
-          <p style={{ color: colors.texto }}>
-            Cargando estado de suscripción...
-          </p>
-        )}
+            <p style={{ color: colors.texto }}>
+              Cargando estado de suscripción...
+            </p>
+          )}
 
-        <button style={styles.boton} onClick={cerrarSesion}>
-          Cerrar sesión
-        </button>
+          <button style={styles.boton} onClick={cerrarSesion}>
+            Cerrar sesión
+          </button>
+        </div>
       </div>
     </>
   )
@@ -75,10 +78,30 @@ const styles: { [key: string]: React.CSSProperties } = {
     paddingRight: 16,
     textAlign: "center",
   },
+  card: {
+    backgroundColor: "#fff",
+    border: `1px solid ${colors.borde}`,
+    borderRadius: 12,
+    padding: 24,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: "50%",
+    backgroundColor: colors.primario,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#fff",
+    fontSize: 32,
+    fontWeight: 700,
+    margin: "0 auto 20px",
+  },
   titulo: {
-    fontSize: 24,
+    fontSize: 22,
     color: colors.primario,
-    marginBottom: 30,
+    marginBottom: 20,
     fontWeight: 700,
   },
   activa: {
