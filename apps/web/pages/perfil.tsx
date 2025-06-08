@@ -13,6 +13,7 @@ interface EstadoSuscripcion {
 export default function Perfil() {
   const router = useRouter()
   const [nombre, setNombre] = useState("")
+  const [email, setEmail] = useState("")
   const [token, setToken] = useState("")
   const [estado, setEstado] = useState<EstadoSuscripcion | null>(null)
 
@@ -22,6 +23,7 @@ export default function Perfil() {
 
     setToken(sesion.token)
     setNombre(sesion.nombre)
+    if (sesion.email) setEmail(sesion.email)
 
     axios
       .get("http://localhost:4000/api/subscription/estado", {
@@ -34,6 +36,7 @@ export default function Perfil() {
   const cerrarSesion = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("nombre")
+    localStorage.removeItem("email")
     router.push("/login")
   }
 
@@ -44,6 +47,12 @@ export default function Perfil() {
         <div style={styles.card}>
           <div style={styles.avatar}>{nombre.charAt(0).toUpperCase()}</div>
           <h2 style={styles.titulo}>{nombre}</h2>
+          {email && <p style={styles.email}>{email}</p>}
+          <p style={styles.bio}>
+            Apasionado por la tecnología y la cultura dominicana.
+          </p>
+          <p style={styles.info}>📍 Santo Domingo, RD</p>
+          <p style={styles.info}>Miembro desde 2025</p>
 
           {estado ? (
             estado.activa ? (
@@ -59,6 +68,14 @@ export default function Perfil() {
               Cargando estado de suscripción...
             </p>
           )}
+
+          <button
+            style={styles.botonSecundario}
+            onClick={() => router.push("/configuracion")}
+          >
+            Configuración de DomiChat
+          </button>
+
 
           <button style={styles.boton} onClick={cerrarSesion}>
             Cerrar sesión
@@ -104,6 +121,21 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: 20,
     fontWeight: 700,
   },
+  email: {
+    color: colors.texto,
+    marginBottom: 8,
+    fontSize: 14,
+  },
+  bio: {
+    color: colors.texto,
+    marginBottom: 12,
+    fontSize: 14,
+  },
+  info: {
+    color: colors.texto,
+    marginBottom: 8,
+    fontSize: 14,
+  },
   activa: {
     color: colors.exito,
     marginBottom: 24,
@@ -123,5 +155,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: 600,
     cursor: "pointer",
     fontSize: 16,
+  },
+  botonSecundario: {
+    backgroundColor: colors.primario,
+    color: "#fff",
+    padding: "12px 20px",
+    border: "none",
+    borderRadius: 10,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontSize: 16,
+    marginBottom: 12,
   },
 }
