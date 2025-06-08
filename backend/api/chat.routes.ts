@@ -8,7 +8,6 @@ import prisma from "../db/prisma"
 import OpenAI from "openai"
 
 const router = express.Router()
-const THRESHOLD = 0.9 // umbral de similitud para RAG
 let datasetCargado = false
 
 // Cliente OpenAI
@@ -24,54 +23,57 @@ router.post("/", autenticarToken, async (req, res) => {
   }
 
   try {
-    // 1) Carga el dataset la primera vez
-    if (!datasetCargado) {
-      await cargarDataset()
-      datasetCargado = true
+    // 1) Priorizar respuesta de GPT-4 Turbo
+    let respGPT: string | null = null
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "Eres DomiChat, un asistente dominicano conversacional.",
+          },
+          { role: "user", content: mensaje },
+        ],
+      })
+
+      respGPT =
+        completion.choices[0].message?.content?.trim() ||
+        "Lo siento, no tengo una respuesta."
+    } catch (err) {
+      console.error("Error al obtener respuesta de OpenAI:", err)
     }
 
-    // 2) Intenta responder desde el dataset local
-    const { respuesta: respLocal, score } =
-      responderDesdeDatasetConScore(mensaje)
-    if (score >= THRESHOLD) {
-      // Guarda en Prisma
+    if (respGPT) {
       await prisma.chat.create({
         data: {
           usuarioId: (req as any).usuario.id,
           mensaje,
-          respuesta: respLocal,
+          respuesta: respGPT,
         },
       })
 
-      res.json({ respuesta: respLocal, fuente: "dataset", score })
+      res.json({ respuesta: respGPT, fuente: "gpt" })
       return
     }
 
-    // 3) Si no hay buen match, fallback a GPT-4 Turbo
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "Eres DomiChat, un asistente dominicano conversacional.",
-        },
-        { role: "user", content: mensaje },
-      ],
-    })
-    const respGPT =
-      completion.choices[0].message?.content?.trim() ||
-      "Lo siento, no tengo una respuesta."
+    // 2) Fallback al dataset local si no hubo respuesta de GPT
+    if (!datasetCargado) {
+      await cargarDataset()
+      datasetCargado = true
+    }
+    const { respuesta: respLocal, score } =
+      responderDesdeDatasetConScore(mensaje)
 
-    // Guarda en Prisma
     await prisma.chat.create({
       data: {
         usuarioId: (req as any).usuario.id,
         mensaje,
-        respuesta: respGPT,
+        respuesta: respLocal,
       },
     })
 
-    res.json({ respuesta: respGPT, fuente: "gpt", score })
+    res.json({ respuesta: respLocal, fuente: "dataset", score })
     return
   } catch (err: any) {
     console.error("Error híbrido RAG/GPT:", err)
