@@ -24,6 +24,9 @@ export default function Header() {
         <Link href="/chat" style={styles.link}>
           Chat
         </Link>
+        <Link href="/historial" style={styles.link}>
+          Historial
+        </Link>
         <Link href="/perfil" style={styles.link}>
           Perfil
         </Link>
@@ -41,8 +44,8 @@ export default function Header() {
 
 const styles: { [key: string]: React.CSSProperties } = {
   header: {
-    backgroundColor: "#fff",
-    borderBottom: `1px solid ${colors.borde}`,
+    backgroundColor: colors.primario,
+    borderBottom: `1px solid ${colors.primario}`,
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 12,
@@ -56,7 +59,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: 16,
   },
   link: {
-    color: colors.primario,
+    color: "#fff",
     fontWeight: 600,
     textDecoration: "none",
     fontSize: 16,
@@ -67,7 +70,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     gap: 12,
   },
   nombre: {
-    color: colors.texto,
+    color: "#fff",
     fontSize: 15,
   },
   boton: {
