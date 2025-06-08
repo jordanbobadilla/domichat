@@ -1,0 +1,117 @@
+import { useEffect, useState } from "react"
+import Header from "@/components/Header"
+import { colors } from "../constants/colors"
+
+const VOCES = [
+  { id: "popi", nombre: "Voz Popi (Distrito Nacional)" },
+  { id: "wawawa", nombre: "Voz Wawawa (Santo Domingo Este/Oeste)" },
+  { id: "cibaeña", nombre: "Voz Cibaeña (Santiago)" },
+  { id: "sureña", nombre: "Voz Sureña (San José de Ocoa)" },
+]
+
+export default function Configuracion() {
+  const [voz, setVoz] = useState("popi")
+  const [temaOscuro, setTemaOscuro] = useState(false)
+
+  useEffect(() => {
+    const v = localStorage.getItem("voz_dominicana")
+    const t = localStorage.getItem("tema")
+    if (v) setVoz(v)
+    if (t === "oscuro") setTemaOscuro(true)
+  }, [])
+
+  const seleccionarVoz = (id: string) => {
+    setVoz(id)
+    localStorage.setItem("voz_dominicana", id)
+  }
+
+  const restaurarVoz = () => {
+    setVoz("popi")
+    localStorage.setItem("voz_dominicana", "popi")
+  }
+
+  const toggleTema = () => {
+    const nuevo = temaOscuro ? "claro" : "oscuro"
+    setTemaOscuro(!temaOscuro)
+    localStorage.setItem("tema", nuevo)
+  }
+
+  return (
+    <>
+      <Header />
+      <div style={styles.wrapper}>
+        <h2 style={styles.titulo}>Configuración</h2>
+
+        <div style={styles.seccion}>
+          <h3 style={styles.subtitulo}>Voz dominicana</h3>
+          {VOCES.map((v) => (
+            <button
+              key={v.id}
+              onClick={() => seleccionarVoz(v.id)}
+              style={{
+                ...styles.opcion,
+                backgroundColor: voz === v.id ? colors.primario : "#fff",
+                color: voz === v.id ? "#fff" : colors.texto,
+              }}
+            >
+              {v.nombre}
+            </button>
+          ))}
+          <button onClick={restaurarVoz} style={styles.botonSecundario}>
+            Restaurar voz por defecto
+          </button>
+        </div>
+
+        <div style={styles.seccion}>
+          <h3 style={styles.subtitulo}>Tema</h3>
+          <button onClick={toggleTema} style={styles.botonSecundario}>
+            Usar tema {temaOscuro ? "claro" : "oscuro"}
+          </button>
+        </div>
+      </div>
+    </>
+  )
+}
+
+const styles: { [key: string]: React.CSSProperties } = {
+  wrapper: {
+    maxWidth: 500,
+    margin: "auto",
+    paddingTop: 40,
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+  titulo: {
+    color: colors.primario,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  seccion: {
+    marginBottom: 32,
+  },
+  subtitulo: {
+    color: colors.texto,
+    marginBottom: 12,
+  },
+  opcion: {
+    display: "block",
+    width: "100%",
+    textAlign: "left",
+    padding: "12px 16px",
+    border: `1px solid ${colors.borde}`,
+    borderRadius: 8,
+    marginBottom: 8,
+    cursor: "pointer",
+    fontSize: 14,
+  },
+  botonSecundario: {
+    backgroundColor: colors.primario,
+    color: "#fff",
+    padding: "10px 16px",
+    border: "none",
+    borderRadius: 8,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontSize: 14,
+  },
+}

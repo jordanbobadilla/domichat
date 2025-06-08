@@ -26,6 +26,7 @@ export default function Login() {
       // Guardar en localStorage
       localStorage.setItem("token", token)
       localStorage.setItem("nombre", usuario.nombre)
+      localStorage.setItem("email", data.email)
 
       // Redirigir al chat
       router.push("/chat")

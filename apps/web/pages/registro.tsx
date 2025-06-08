@@ -29,6 +29,7 @@ export default function Registro() {
 
       localStorage.setItem("token", token)
       localStorage.setItem("nombre", usuario.nombre)
+      localStorage.setItem("email", data.email)
 
       router.push("/chat")
     } catch (err: any) {

@@ -30,6 +30,9 @@ export default function Header() {
         <Link href="/perfil" style={styles.link}>
           Perfil
         </Link>
+        <Link href="/configuracion" style={styles.link}>
+          Configuración
+        </Link>
       </div>
 
       <div style={styles.right}>
