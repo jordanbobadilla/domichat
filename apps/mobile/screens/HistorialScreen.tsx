@@ -16,6 +16,7 @@ import axios from "axios"
 import { BASE_URL } from "../services/api"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
+import Header from "../components/Header"
 
 export default function HistorialScreen({ navigation }: any) {
   const [historial, setHistorial] = useState<any[]>([])
@@ -122,6 +123,7 @@ export default function HistorialScreen({ navigation }: any) {
   if (cargando) {
     return (
       <View style={[styles.centered, { backgroundColor: colors.fondo }]}>
+        <Header titulo="Historial" />
         <ActivityIndicator size="large" color={colors.primario} />
         <Text style={{ marginTop: 10, color: colors.texto }}>
           Cargando historial...
@@ -133,6 +135,7 @@ export default function HistorialScreen({ navigation }: any) {
   if (historial.length === 0) {
     return (
       <View style={[styles.centered, { backgroundColor: colors.fondo }]}>
+        <Header titulo="Historial" />
         <Text style={{ color: colors.texto }}>
           No tienes conversaciones guardadas aún.
         </Text>
@@ -142,6 +145,7 @@ export default function HistorialScreen({ navigation }: any) {
 
   return (
     <ScrollView style={{ backgroundColor: colors.fondo, padding: 16 }}>
+      <Header titulo="Historial" />
       {historial.map((item) => (
         <View
           key={item.id}
