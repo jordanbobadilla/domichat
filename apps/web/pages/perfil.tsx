@@ -76,6 +76,7 @@ export default function Perfil() {
             Configuración de DomiChat
           </button>
 
+
           <button style={styles.boton} onClick={cerrarSesion}>
             Cerrar sesión
           </button>

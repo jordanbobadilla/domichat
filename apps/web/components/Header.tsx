@@ -24,6 +24,9 @@ export default function Header() {
         <Link href="/chat" style={styles.link}>
           Chat
         </Link>
+        <Link href="/historial" style={styles.link}>
+          Historial
+        </Link>
         <Link href="/perfil" style={styles.link}>
           Perfil
         </Link>
