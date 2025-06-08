@@ -85,7 +85,7 @@ export default function ChatScreen({ route }: any) {
 
       if (token) {
         await axios.post(
-          `${BASE_URL}/guardar-historial`,
+          `${BASE_URL}/chat/historial`,
           { titulo: nuevo.titulo, fecha: nuevo.fecha, mensajes },
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -135,7 +135,8 @@ export default function ChatScreen({ route }: any) {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === "ios" ? "height" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 80}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
       {historial.length === 0 ? (

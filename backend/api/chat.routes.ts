@@ -44,6 +44,7 @@ router.post("/", autenticarToken, async (req, res) => {
       })
 
       res.json({ respuesta: respLocal, fuente: "dataset", score })
+      return
     }
 
     // 3) Si no hay buen match, fallback a GPT-4 Turbo
@@ -71,6 +72,7 @@ router.post("/", autenticarToken, async (req, res) => {
     })
 
     res.json({ respuesta: respGPT, fuente: "gpt", score })
+    return
   } catch (err: any) {
     console.error("Error híbrido RAG/GPT:", err)
     res.status(500).json({ error: "Error interno del sistema." })
@@ -88,9 +90,30 @@ router.get("/historial", autenticarToken, async (req, res) => {
     })
 
     res.json(historial)
+    return
   } catch (error) {
     console.error("Error al obtener historial:", error)
     res.status(500).json({ error: "Error al obtener historial" })
+  }
+})
+
+router.post("/historial", autenticarToken, async (req, res) => {
+  const userId = (req as any).usuario.id
+  const { titulo, fecha, mensajes } = req.body
+  // insert into Prisma Historial
+  try {
+    const historial = await prisma.historial.createMany({
+      data: {
+        usuarioId: userId,
+        titulo: titulo,
+        fecha: fecha,
+        mensajes: mensajes,
+      },
+    })
+    res.json(historial)
+    return
+  } catch (error) {
+    res.status(500).json({ error: "Error al crear historial" })
   }
 })
 
@@ -105,6 +128,7 @@ router.put("/historial/:id", autenticarToken, async (req, res) => {
       data: { titulo: nuevoTitulo },
     })
     res.json(actualizado)
+    return
   } catch (error) {
     res.status(500).json({ error: "Error al renombrar historial" })
   }
@@ -119,6 +143,7 @@ router.delete("/historial/:id", autenticarToken, async (req, res) => {
       where: { id, usuarioId: userId },
     })
     res.json({ eliminado: true })
+    return
   } catch (error) {
     res.status(500).json({ error: "Error al eliminar historial" })
   }
@@ -133,6 +158,7 @@ router.delete("/historial/todo", autenticarToken, async (req, res) => {
       where: { usuarioId: userId },
     })
     res.json({ eliminado: true })
+    return
   } catch (error) {
     console.error("Error al eliminar todo el historial:", error)
     res.status(500).json({ error: "Error al eliminar todo el historial" })

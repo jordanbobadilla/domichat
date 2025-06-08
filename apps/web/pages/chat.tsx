@@ -29,7 +29,7 @@ export default function Chat() {
       .get("http://localhost:4000/api/chat/historial", {
         headers: { Authorization: `Bearer ${sesion.token}` },
       })
-      .then((res) => setHistorial(res.data.historial))
+      .then((res) => setHistorial(res.data))
       .catch(() => {})
   }, [])
 
