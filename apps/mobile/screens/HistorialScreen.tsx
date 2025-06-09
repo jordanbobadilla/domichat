@@ -3,13 +3,14 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
+  FlatList,
   ActivityIndicator,
   TouchableOpacity,
   TextInput,
   Modal,
   Alert,
 } from "react-native"
+import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
 import axios from "axios"
@@ -146,57 +147,71 @@ export default function HistorialScreen({ navigation }: any) {
   return (
     <View style={{ flex: 1, backgroundColor: colors.fondo }}>
       <Header titulo="Historial" />
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-      {historial.map((item) => (
-        <View
-          key={item.id}
-          style={[styles.card, { backgroundColor: colors.secundario }]}
-        >
+      <FlatList
+        contentContainerStyle={{ padding: 16 }}
+        data={historial}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={[styles.card, { backgroundColor: colors.input }]}>
+            <TouchableOpacity
+              style={{ flex: 1 }}
+              onPress={async () => {
+                const token = await AsyncStorage.getItem("token")
+                navigation.navigate("ChatScreen", {
+                  token,
+                  mensajePrevio: item.mensajes[0]?.mensaje,
+                  respuestaPrevio: item.mensajes[0]?.respuesta,
+                })
+              }}
+            >
+              <Text
+                style={[styles.titulo, { color: colors.texto }]}
+                numberOfLines={1}
+              >
+                {item.titulo}
+              </Text>
+              <Text style={[styles.fecha, { color: colors.gris }]}>
+                {new Date(item.fecha).toLocaleDateString()} {" "}
+                {new Date(item.fecha).toLocaleTimeString()}
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.iconRow}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => {
+                  setChatIdEditando(item.id)
+                  setTituloEditando(item.titulo)
+                  setModalVisible(true)
+                }}
+              >
+                <Ionicons
+                  name="pencil-outline"
+                  size={20}
+                  color={colors.primario}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => eliminarHistorial(item.id)}
+              >
+                <Ionicons
+                  name="trash-outline"
+                  size={20}
+                  color={colors.peligro}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+        ListFooterComponent={
           <TouchableOpacity
-            onPress={async () => {
-              const token = await AsyncStorage.getItem("token")
-              navigation.navigate("ChatScreen", {
-                token,
-                mensajePrevio: item.mensajes[0]?.mensaje,
-                respuestaPrevio: item.mensajes[0]?.respuesta,
-              })
-            }}
+            style={[styles.botonReset, { backgroundColor: colors.gris }]}
+            onPress={eliminarTodoElHistorial}
           >
-            <Text style={[styles.titulo, { color: colors.texto }]}>
-              {item.titulo}
-            </Text>
-            <Text style={[styles.fecha, { color: colors.gris }]}>
-              {new Date(item.fecha).toLocaleDateString()}{" "}
-              {new Date(item.fecha).toLocaleTimeString()}
-            </Text>
+            <Text style={styles.textoBoton}>Eliminar todo el historial</Text>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.boton, { backgroundColor: colors.primario }]}
-            onPress={() => {
-              setChatIdEditando(item.id)
-              setTituloEditando(item.titulo)
-              setModalVisible(true)
-            }}
-          >
-            <Text style={styles.textoBoton}>Renombrar</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.boton, { backgroundColor: colors.peligro }]}
-            onPress={() => eliminarHistorial(item.id)}
-          >
-            <Text style={styles.textoBoton}>Eliminar</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
-
-      <TouchableOpacity
-        style={[styles.botonReset, { backgroundColor: colors.gris }]}
-        onPress={eliminarTodoElHistorial}
-      >
-        <Text style={styles.textoBoton}>Eliminar todo el historial</Text>
-      </TouchableOpacity>
+        }
+      />
 
       {/* MODAL */}
       <Modal visible={modalVisible} transparent animationType="slide">
@@ -204,9 +219,7 @@ export default function HistorialScreen({ navigation }: any) {
           <View
             style={[styles.modalContenido, { backgroundColor: colors.fondo }]}
           >
-            <Text style={[styles.modalTitulo, { color: colors.texto }]}>
-              Renombrar
-            </Text>
+            <Text style={[styles.modalTitulo, { color: colors.texto }]}>Renombrar</Text>
             <TextInput
               value={tituloEditando}
               onChangeText={setTituloEditando}
@@ -242,7 +255,6 @@ export default function HistorialScreen({ navigation }: any) {
           </View>
         </View>
       </Modal>
-      </ScrollView>
     </View>
   )
 }
@@ -254,9 +266,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
-    marginBottom: 16,
-    borderRadius: 10,
+    marginBottom: 12,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
   titulo: {
     fontSize: 16,
@@ -266,12 +285,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  boton: {
-    marginTop: 10,
-    borderRadius: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignSelf: "flex-start",
+  iconRow: {
+    flexDirection: "row",
+    marginLeft: 12,
+  },
+  iconButton: {
+    padding: 6,
+    marginLeft: 8,
   },
   textoBoton: {
     color: "#fff",
@@ -281,9 +301,14 @@ const styles = StyleSheet.create({
   botonReset: {
     marginTop: 12,
     marginBottom: 32,
-    paddingVertical: 10,
-    borderRadius: 10,
+    paddingVertical: 12,
+    borderRadius: 12,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   modalFondo: {
     flex: 1,
