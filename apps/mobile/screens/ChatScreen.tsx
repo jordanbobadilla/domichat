@@ -184,10 +184,10 @@ export default function ChatScreen({ route }: any) {
           onChangeText={setMensaje}
           placeholder="Escribe tu mensaje..."
           placeholderTextColor={colors.gris}
-          style={[
-            styles.input,
-            { backgroundColor: colors.secundario, color: colors.texto },
-          ]}
+              style={[
+                styles.input,
+                { backgroundColor: colors.input, color: colors.texto },
+              ]}
         />
         <TouchableOpacity onPress={enviarMensaje} disabled={cargando}>
           <Ionicons name="send" size={24} color={colors.primario} />

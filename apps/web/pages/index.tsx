@@ -1,11 +1,15 @@
 // pages/index.tsx
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useRouter } from "next/router"
 import Image from "next/image"
+import { ThemeContext } from "../context/ThemeContext"
+import { temas } from "../constants/colors"
 
 export default function Home() {
   const router = useRouter()
   const [mostrar, setMostrar] = useState(false)
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   useEffect(() => {
     const yaVisto = localStorage.getItem("welcome_shown")
@@ -26,6 +30,42 @@ export default function Home() {
 
   if (!mostrar) return null
 
+  const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+      minHeight: "100vh",
+      backgroundColor: colors.fondo,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    titulo: {
+      fontSize: "2rem",
+      color: colors.primario,
+      fontWeight: "bold",
+      marginTop: 20,
+      textAlign: "center",
+    },
+    subtitulo: {
+      fontSize: "1rem",
+      color: colors.gris,
+      marginTop: 10,
+      marginBottom: 30,
+      textAlign: "center",
+    },
+    boton: {
+      backgroundColor: colors.primario,
+      color: "#fff",
+      padding: "12px 20px",
+      borderRadius: 10,
+      border: "none",
+      fontSize: 16,
+      fontWeight: 600,
+      cursor: "pointer",
+    },
+  }
+
   return (
     <div style={styles.container}>
       <Image src="/logo.png" width={160} height={160} alt="DomiChat logo" />
@@ -38,40 +78,4 @@ export default function Home() {
       </button>
     </div>
   )
-}
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    minHeight: "100vh",
-    backgroundColor: "#fff",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  titulo: {
-    fontSize: "2rem",
-    color: "#0057A5",
-    fontWeight: "bold",
-    marginTop: 20,
-    textAlign: "center",
-  },
-  subtitulo: {
-    fontSize: "1rem",
-    color: "#555",
-    marginTop: 10,
-    marginBottom: 30,
-    textAlign: "center",
-  },
-  boton: {
-    backgroundColor: "#0057A5",
-    color: "#fff",
-    padding: "12px 20px",
-    borderRadius: 10,
-    border: "none",
-    fontSize: 16,
-    fontWeight: 600,
-    cursor: "pointer",
-  },
 }

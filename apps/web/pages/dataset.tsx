@@ -1,5 +1,6 @@
-import { useState } from "react"
-import { colors } from "../constants/colors"
+import { useState, useContext } from "react"
+import { temas } from "../constants/colors"
+import { ThemeContext } from "../context/ThemeContext"
 import axios from "axios"
 
 interface Entrada {
@@ -11,6 +12,8 @@ export default function DatasetForm() {
   const [pregunta, setPregunta] = useState("")
   const [respuesta, setRespuesta] = useState("")
   const [entradas, setEntradas] = useState<Entrada[]>([])
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   const agregarEntrada = async () => {
     if (!pregunta || !respuesta) return
@@ -37,6 +40,29 @@ export default function DatasetForm() {
     link.click()
   }
 
+  const styles = {
+    textarea: {
+      width: "100%",
+      padding: 12,
+      fontSize: 16,
+      marginBottom: 16,
+      borderRadius: 8,
+      border: `1px solid ${colors.borde}`,
+      backgroundColor: colors.input,
+      color: colors.texto,
+    },
+    boton: {
+      backgroundColor: colors.primario,
+      color: "#fff",
+      padding: "10px 16px",
+      border: "none",
+      borderRadius: 8,
+      fontWeight: 600,
+      cursor: "pointer",
+      marginTop: 8,
+    },
+  }
+
   return (
     <div
       style={{
@@ -45,6 +71,7 @@ export default function DatasetForm() {
         paddingTop: 40,
         paddingLeft: 16,
         paddingRight: 16,
+        backgroundColor: colors.fondo,
       }}
     >
       <h2 style={{ color: colors.primario }}>Crear Dataset Dominicano 🇩🇴</h2>
@@ -88,24 +115,4 @@ export default function DatasetForm() {
       )}
     </div>
   )
-}
-
-const styles = {
-  textarea: {
-    width: "100%",
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 16,
-    borderRadius: 8,
-    border: `1px solid ${colors.borde}`,
-  },
-  boton: {
-    backgroundColor: colors.primario,
-    color: "#fff",
-    padding: "10px 16px",
-    border: "none",
-    borderRadius: 8,
-    fontWeight: 600,
-    cursor: "pointer",
-  },
 }

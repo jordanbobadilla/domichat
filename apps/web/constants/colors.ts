@@ -1,8 +1,26 @@
-export const colors = {
-  primario: "#0057A5", // Azul dominicano
-  secundario: "#FF3E3E", // Rojo fuerte
-  fondo: "#F9F9F9", // Fondo general claro
-  borde: "#D9D9D9", // Bordes suaves
-  texto: "#333333", // Texto principal
-  exito: "#24A148", // Confirmaciones y estados positivos
+export type Tema = "claro" | "oscuro"
+
+export const temas: Record<Tema, { [key: string]: string }> = {
+  claro: {
+    fondo: "#ffffff",
+    texto: "#1a1a1a",
+    primario: "#0057A5",
+    secundario: "#FF3E3E",
+    input: "#f5f5f5",
+    exito: "#24A148",
+    peligro: "#D32F2F",
+    gris: "#999999",
+    borde: "#D9D9D9",
+  },
+  oscuro: {
+    fondo: "#121212",
+    texto: "#f5f5f5",
+    primario: "#0057A5",
+    secundario: "#1e1e1e",
+    input: "#1e1e1e",
+    exito: "#81C784",
+    peligro: "#ef5350",
+    gris: "#aaaaaa",
+    borde: "#D9D9D9",
+  },
 }

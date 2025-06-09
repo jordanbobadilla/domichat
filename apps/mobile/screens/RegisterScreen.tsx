@@ -61,7 +61,7 @@ export default function RegisterScreen({ navigation }: any) {
         <TextInput
           style={[
             styles.input,
-            { backgroundColor: colors.secundario, color: colors.texto },
+            { backgroundColor: colors.input, color: colors.texto },
           ]}
           placeholder="Nombre completo"
           placeholderTextColor={colors.gris}
@@ -71,7 +71,7 @@ export default function RegisterScreen({ navigation }: any) {
         <TextInput
           style={[
             styles.input,
-            { backgroundColor: colors.secundario, color: colors.texto },
+            { backgroundColor: colors.input, color: colors.texto },
           ]}
           placeholder="Correo electrónico"
           placeholderTextColor={colors.gris}
@@ -81,7 +81,7 @@ export default function RegisterScreen({ navigation }: any) {
         <TextInput
           style={[
             styles.input,
-            { backgroundColor: colors.secundario, color: colors.texto },
+            { backgroundColor: colors.input, color: colors.texto },
           ]}
           placeholder="Contraseña"
           placeholderTextColor={colors.gris}

@@ -1,11 +1,56 @@
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useRouter } from "next/router"
-import { colors } from "../constants/colors"
+import { temas } from "../constants/colors"
+import { ThemeContext } from "../context/ThemeContext"
 
 export default function Header() {
   const router = useRouter()
   const [nombre, setNombre] = useState("")
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    header: {
+      backgroundColor: colors.primario,
+      borderBottom: `1px solid ${colors.primario}`,
+      paddingLeft: 16,
+      paddingRight: 16,
+      paddingTop: 12,
+      paddingBottom: 12,
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    left: {
+      display: "flex",
+      gap: 16,
+    },
+    link: {
+      color: "#fff",
+      fontWeight: 600,
+      textDecoration: "none",
+      fontSize: 16,
+    },
+    right: {
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+    },
+    nombre: {
+      color: "#fff",
+      fontSize: 15,
+    },
+    boton: {
+      backgroundColor: colors.secundario,
+      color: "#fff",
+      border: "none",
+      borderRadius: 6,
+      padding: "8px 14px",
+      fontWeight: 600,
+      cursor: "pointer",
+    },
+  }
 
   useEffect(() => {
     const n = localStorage.getItem("nombre")
@@ -43,46 +88,4 @@ export default function Header() {
       </div>
     </header>
   )
-}
-
-const styles: { [key: string]: React.CSSProperties } = {
-  header: {
-    backgroundColor: colors.primario,
-    borderBottom: `1px solid ${colors.primario}`,
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 12,
-    paddingBottom: 12,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  left: {
-    display: "flex",
-    gap: 16,
-  },
-  link: {
-    color: "#fff",
-    fontWeight: 600,
-    textDecoration: "none",
-    fontSize: 16,
-  },
-  right: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-  },
-  nombre: {
-    color: "#fff",
-    fontSize: 15,
-  },
-  boton: {
-    backgroundColor: colors.secundario,
-    color: "#fff",
-    border: "none",
-    borderRadius: 6,
-    padding: "8px 14px",
-    fontWeight: 600,
-    cursor: "pointer",
-  },
 }

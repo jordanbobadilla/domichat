@@ -72,7 +72,7 @@ export default function LoginScreen({ navigation }: any) {
         <TextInput
           style={[
             styles.input,
-            { backgroundColor: colors.secundario, color: colors.texto },
+            { backgroundColor: colors.input, color: colors.texto },
           ]}
           placeholder="Correo electrónico"
           placeholderTextColor={colors.gris}
@@ -82,7 +82,7 @@ export default function LoginScreen({ navigation }: any) {
         <TextInput
           style={[
             styles.input,
-            { backgroundColor: colors.secundario, color: colors.texto },
+            { backgroundColor: colors.input, color: colors.texto },
           ]}
           placeholder="Contraseña"
           placeholderTextColor={colors.gris}

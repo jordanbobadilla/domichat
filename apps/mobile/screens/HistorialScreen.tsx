@@ -211,7 +211,11 @@ export default function HistorialScreen({ navigation }: any) {
               onChangeText={setTituloEditando}
               style={[
                 styles.modalInput,
-                { color: colors.texto, borderColor: colors.gris },
+                {
+                  color: colors.texto,
+                  borderColor: colors.gris,
+                  backgroundColor: colors.input,
+                },
               ]}
               placeholder="Nuevo título"
               placeholderTextColor={colors.gris}
