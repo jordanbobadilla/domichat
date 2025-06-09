@@ -18,6 +18,7 @@ import axios from "axios"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
 import Header from "../components/Header"
+import Markdown from "react-native-markdown-display"
 
 export default function ChatScreen({ route }: any) {
   const params = route?.params || {}
@@ -160,17 +161,20 @@ export default function ChatScreen({ route }: any) {
           {historial.map((item, index) => (
             <View key={index}>
               <View
-                style={[styles.mensajeUsuario, { backgroundColor: "#DCF8C6" }]}
-              >
-                <Text style={{ color: "#000" }}>{item.mensaje}</Text>
-              </View>
-              <View
                 style={[
-                  styles.mensajeBot,
-                  { backgroundColor: colors.secundario },
+                  styles.mensajeUsuario,
+                  {
+                    backgroundColor:
+                      index % 2 === 0 ? colors.primario : colors.secundario,
+                  },
                 ]}
               >
-                <Text style={{ color: colors.texto }}>{item.respuesta}</Text>
+                <Text style={{ color: "#fff" }}>{item.mensaje}</Text>
+              </View>
+              <View style={styles.mensajeBot}>
+                <Markdown style={{ body: { color: "#000" } }}>
+                  {item.respuesta}
+                </Markdown>
               </View>
             </View>
           ))}
