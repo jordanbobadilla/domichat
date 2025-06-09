@@ -175,7 +175,6 @@ export default function HistorialScreen({ navigation }: any) {
                 {new Date(item.fecha).toLocaleTimeString()}
               </Text>
             </TouchableOpacity>
-
             <View style={styles.iconRow}>
               <TouchableOpacity
                 style={styles.iconButton}

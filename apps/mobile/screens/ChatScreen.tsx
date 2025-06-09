@@ -140,7 +140,7 @@ export default function ChatScreen({ route }: any) {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 80}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
-      <Header titulo="Chat" />
+      <Header titulo={`Hola, ${nombre.split(" ")[0]} 👋`} />
       {historial.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={[styles.emptyTitulo, { color: colors.texto }]}>
