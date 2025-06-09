@@ -4,6 +4,7 @@ import { temas } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
 import Header from "../components/Header"
 import { ThemeContext } from "../context/ThemeContext"
+import ReactMarkdown from "react-markdown"
 
 interface Mensaje {
   mensaje: string
@@ -155,6 +156,16 @@ export default function Chat() {
     respuesta: {
       color: colors.texto,
     },
+    mensajeUsuario: {
+      padding: 10,
+      borderRadius: 10,
+      marginBottom: 8,
+    },
+    mensajeBot: {
+      padding: 10,
+      borderRadius: 10,
+      marginBottom: 20,
+    },
     inputBox: {
       display: "flex",
       gap: 8,
@@ -189,11 +200,20 @@ export default function Chat() {
 
         <div ref={chatRef} style={styles.chatBox}>
           {historial.map((h, i) => (
-            <div key={i} style={styles.card}>
-              <p style={styles.etiquetaUsuario}>🧑 Tú:</p>
-              <p style={styles.mensaje}>{h.mensaje}</p>
-              <p style={styles.etiquetaBot}>🤖 DomiChat:</p>
-              <p style={styles.respuesta}>{h.respuesta}</p>
+            <div key={i}>
+              <div
+                style={{
+                  ...styles.mensajeUsuario,
+                  backgroundColor: i % 2 === 0 ? colors.primario : colors.secundario,
+                }}
+              >
+                <p style={{ color: "#fff", margin: 0 }}>{h.mensaje}</p>
+              </div>
+              <div style={styles.mensajeBot}>
+                <div style={{ color: "#000" }}>
+                  <ReactMarkdown>{h.respuesta}</ReactMarkdown>
+                </div>
+              </div>
             </div>
           ))}
         </div>
