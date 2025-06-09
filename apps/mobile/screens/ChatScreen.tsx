@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native"
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { BASE_URL, getHistorial } from "../services/api"
 import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -47,6 +48,7 @@ export default function ChatScreen({ route }: any) {
 
   const { tema } = useContext(ThemeContext)
   const colors = temas[tema]
+  const insets = useSafeAreaInsets()
 
   useEffect(() => {
     if (!mensajePrevio && !respuestaPrevio && token) {
@@ -137,7 +139,7 @@ export default function ChatScreen({ route }: any) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "height" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 80}
+      keyboardVerticalOffset={insets.top + 56}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
       <Header titulo={`Hola, ${nombre.split(" ")[0]} 👋`} />
@@ -178,7 +180,10 @@ export default function ChatScreen({ route }: any) {
         </ScrollView>
       )}
 
-      <View style={[styles.inputContainer, { backgroundColor: colors.fondo }]}>
+      <SafeAreaView
+        edges={["bottom"]}
+        style={[styles.inputContainer, { backgroundColor: colors.fondo }]}
+      >
         <TextInput
           value={mensaje}
           onChangeText={setMensaje}
@@ -192,7 +197,7 @@ export default function ChatScreen({ route }: any) {
         <TouchableOpacity onPress={enviarMensaje} disabled={cargando}>
           <Ionicons name="send" size={24} color={colors.primario} />
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   )
 }
