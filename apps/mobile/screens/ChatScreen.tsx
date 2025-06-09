@@ -138,7 +138,7 @@ export default function ChatScreen({ route }: any) {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "height" : "height"}
       keyboardVerticalOffset={insets.top + 56}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
