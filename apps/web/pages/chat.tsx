@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useContext } from "react"
 import axios from "axios"
-import { colors } from "../constants/colors"
+import { temas } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
 import Header from "../components/Header"
+import { ThemeContext } from "../context/ThemeContext"
 
 interface Mensaje {
   mensaje: string
@@ -17,6 +18,8 @@ export default function Chat() {
   const [historial, setHistorial] = useState<Mensaje[]>([])
   const [cargando, setCargando] = useState(false)
   const chatRef = useRef<HTMLDivElement>(null)
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   useEffect(() => {
     const sesion = verificarSesion()
@@ -105,6 +108,79 @@ export default function Chat() {
     }
   }
 
+  const styles: { [key: string]: React.CSSProperties } = {
+    wrapper: {
+      maxWidth: 800,
+      margin: "auto",
+      paddingTop: 30,
+      paddingLeft: 16,
+      paddingRight: 16,
+      display: "flex",
+      flexDirection: "column",
+      height: "100vh",
+      boxSizing: "border-box",
+      backgroundColor: colors.fondo,
+    },
+    titulo: {
+      color: colors.primario,
+      fontWeight: 700,
+      marginBottom: 20,
+    },
+    chatBox: {
+      flex: 1,
+      overflowY: "auto",
+      paddingBottom: 20,
+    },
+    card: {
+      backgroundColor: colors.input,
+      border: `1px solid ${colors.borde}`,
+      borderRadius: 10,
+      padding: 14,
+      marginBottom: 12,
+    },
+    etiquetaUsuario: {
+      color: colors.primario,
+      fontWeight: 600,
+      marginBottom: 4,
+    },
+    etiquetaBot: {
+      color: colors.texto,
+      fontWeight: 600,
+      marginTop: 10,
+    },
+    mensaje: {
+      color: colors.texto,
+      marginBottom: 6,
+    },
+    respuesta: {
+      color: colors.texto,
+    },
+    inputBox: {
+      display: "flex",
+      gap: 8,
+      paddingTop: 10,
+      borderTop: `1px solid ${colors.borde}`,
+    },
+    input: {
+      flex: 1,
+      padding: 12,
+      fontSize: 16,
+      borderRadius: 8,
+      border: `1px solid ${colors.borde}`,
+      backgroundColor: colors.input,
+      color: colors.texto,
+    },
+    boton: {
+      backgroundColor: colors.primario,
+      color: "#fff",
+      border: "none",
+      padding: "12px 20px",
+      borderRadius: 8,
+      fontWeight: 600,
+      cursor: "pointer",
+    },
+  }
+
   return (
     <>
       <Header />
@@ -137,74 +213,4 @@ export default function Chat() {
       </div>
     </>
   )
-}
-
-const styles: { [key: string]: React.CSSProperties } = {
-  wrapper: {
-    maxWidth: 800,
-    margin: "auto",
-    paddingTop: 30,
-    paddingLeft: 16,
-    paddingRight: 16,
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    boxSizing: "border-box",
-  },
-  titulo: {
-    color: colors.primario,
-    fontWeight: 700,
-    marginBottom: 20,
-  },
-  chatBox: {
-    flex: 1,
-    overflowY: "auto",
-    paddingBottom: 20,
-  },
-  card: {
-    backgroundColor: "#fff",
-    border: `1px solid ${colors.borde}`,
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 12,
-  },
-  etiquetaUsuario: {
-    color: colors.primario,
-    fontWeight: 600,
-    marginBottom: 4,
-  },
-  etiquetaBot: {
-    color: colors.texto,
-    fontWeight: 600,
-    marginTop: 10,
-  },
-  mensaje: {
-    color: colors.texto,
-    marginBottom: 6,
-  },
-  respuesta: {
-    color: "#444",
-  },
-  inputBox: {
-    display: "flex",
-    gap: 8,
-    paddingTop: 10,
-    borderTop: `1px solid ${colors.borde}`,
-  },
-  input: {
-    flex: 1,
-    padding: 12,
-    fontSize: 16,
-    borderRadius: 8,
-    border: `1px solid ${colors.borde}`,
-  },
-  boton: {
-    backgroundColor: colors.primario,
-    color: "#fff",
-    border: "none",
-    padding: "12px 20px",
-    borderRadius: 8,
-    fontWeight: 600,
-    cursor: "pointer",
-  },
 }

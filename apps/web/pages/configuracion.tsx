@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import Header from "@/components/Header"
-import { colors } from "../constants/colors"
+import { temas } from "../constants/colors"
+import { ThemeContext } from "../context/ThemeContext"
 
 const VOCES = [
   { id: "popi", nombre: "Voz Popi (Distrito Nacional)" },
@@ -11,13 +12,12 @@ const VOCES = [
 
 export default function Configuracion() {
   const [voz, setVoz] = useState("popi")
-  const [temaOscuro, setTemaOscuro] = useState(false)
+  const { tema, toggleTema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   useEffect(() => {
     const v = localStorage.getItem("voz_dominicana")
-    const t = localStorage.getItem("tema")
     if (v) setVoz(v)
-    if (t === "oscuro") setTemaOscuro(true)
   }, [])
 
   const seleccionarVoz = (id: string) => {
@@ -30,14 +30,59 @@ export default function Configuracion() {
     localStorage.setItem("voz_dominicana", "popi")
   }
 
-  const toggleTema = () => {
-    const nuevo = temaOscuro ? "claro" : "oscuro"
-    setTemaOscuro(!temaOscuro)
-    localStorage.setItem("tema", nuevo)
+  const cambiarTema = () => {
+    toggleTema()
+  }
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    wrapper: {
+      maxWidth: 500,
+      margin: "auto",
+      paddingTop: 40,
+      paddingLeft: 16,
+      paddingRight: 16,
+      backgroundColor: colors.fondo,
+    },
+    titulo: {
+      color: colors.primario,
+      marginBottom: 20,
+      textAlign: "center",
+    },
+    seccion: {
+      marginBottom: 32,
+    },
+    subtitulo: {
+      color: colors.texto,
+      marginBottom: 12,
+    },
+    opcion: {
+      display: "block",
+      width: "100%",
+      textAlign: "left",
+      padding: "12px 16px",
+      border: `1px solid ${colors.borde}`,
+      borderRadius: 8,
+      marginBottom: 8,
+      cursor: "pointer",
+      fontSize: 14,
+      backgroundColor: colors.input,
+      color: colors.texto,
+    },
+    botonSecundario: {
+      backgroundColor: colors.primario,
+      color: "#fff",
+      padding: "10px 16px",
+      border: "none",
+      borderRadius: 8,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontSize: 14,
+      marginTop: 8,
+    },
   }
 
   return (
-    <>
+    <> 
       <Header />
       <div style={styles.wrapper}>
         <h2 style={styles.titulo}>Configuración</h2>
@@ -64,54 +109,11 @@ export default function Configuracion() {
 
         <div style={styles.seccion}>
           <h3 style={styles.subtitulo}>Tema</h3>
-          <button onClick={toggleTema} style={styles.botonSecundario}>
-            Usar tema {temaOscuro ? "claro" : "oscuro"}
+          <button onClick={cambiarTema} style={styles.botonSecundario}>
+            Usar tema {tema === "oscuro" ? "claro" : "oscuro"}
           </button>
         </div>
       </div>
     </>
   )
-}
-
-const styles: { [key: string]: React.CSSProperties } = {
-  wrapper: {
-    maxWidth: 500,
-    margin: "auto",
-    paddingTop: 40,
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-  titulo: {
-    color: colors.primario,
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  seccion: {
-    marginBottom: 32,
-  },
-  subtitulo: {
-    color: colors.texto,
-    marginBottom: 12,
-  },
-  opcion: {
-    display: "block",
-    width: "100%",
-    textAlign: "left",
-    padding: "12px 16px",
-    border: `1px solid ${colors.borde}`,
-    borderRadius: 8,
-    marginBottom: 8,
-    cursor: "pointer",
-    fontSize: 14,
-  },
-  botonSecundario: {
-    backgroundColor: colors.primario,
-    color: "#fff",
-    padding: "10px 16px",
-    border: "none",
-    borderRadius: 8,
-    fontWeight: 600,
-    cursor: "pointer",
-    fontSize: 14,
-  },
 }

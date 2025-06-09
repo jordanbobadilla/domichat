@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import axios from "axios"
 import { useRouter } from "next/router"
 import { verificarSesion } from "../services/auth"
-import { colors } from "../constants/colors"
+import { temas } from "../constants/colors"
 import Header from "@/components/Header"
+import { ThemeContext } from "../context/ThemeContext"
 
 interface EstadoSuscripcion {
   activa: boolean
@@ -16,6 +17,8 @@ export default function Perfil() {
   const [email, setEmail] = useState("")
   const [token, setToken] = useState("")
   const [estado, setEstado] = useState<EstadoSuscripcion | null>(null)
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   useEffect(() => {
     const sesion = verificarSesion()
@@ -38,6 +41,90 @@ export default function Perfil() {
     localStorage.removeItem("nombre")
     localStorage.removeItem("email")
     router.push("/login")
+  }
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    wrapper: {
+      maxWidth: 400,
+      margin: "auto",
+      paddingTop: "12vh",
+      paddingLeft: 16,
+      paddingRight: 16,
+      textAlign: "center",
+      backgroundColor: colors.fondo,
+    },
+    card: {
+      backgroundColor: colors.input,
+      border: `1px solid ${colors.borde}`,
+      borderRadius: 12,
+      padding: 24,
+      boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+    },
+    avatar: {
+      width: 80,
+      height: 80,
+      borderRadius: "50%",
+      backgroundColor: colors.primario,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "#fff",
+      fontSize: 32,
+      fontWeight: 700,
+      margin: "0 auto 20px",
+    },
+    titulo: {
+      fontSize: 22,
+      color: colors.primario,
+      marginBottom: 20,
+      fontWeight: 700,
+    },
+    email: {
+      color: colors.texto,
+      marginBottom: 8,
+      fontSize: 14,
+    },
+    bio: {
+      color: colors.texto,
+      marginBottom: 12,
+      fontSize: 14,
+    },
+    info: {
+      color: colors.texto,
+      marginBottom: 8,
+      fontSize: 14,
+    },
+    activa: {
+      color: colors.exito,
+      marginBottom: 24,
+      fontSize: 16,
+    },
+    inactiva: {
+      color: colors.texto,
+      marginBottom: 24,
+      fontSize: 16,
+    },
+    boton: {
+      backgroundColor: colors.secundario,
+      color: "#fff",
+      padding: "12px 20px",
+      border: "none",
+      borderRadius: 10,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontSize: 16,
+    },
+    botonSecundario: {
+      backgroundColor: colors.primario,
+      color: "#fff",
+      padding: "12px 20px",
+      border: "none",
+      borderRadius: 10,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontSize: 16,
+      marginBottom: 12,
+    },
   }
 
   return (
@@ -84,87 +171,4 @@ export default function Perfil() {
       </div>
     </>
   )
-}
-
-const styles: { [key: string]: React.CSSProperties } = {
-  wrapper: {
-    maxWidth: 400,
-    margin: "auto",
-    paddingTop: "12vh",
-    paddingLeft: 16,
-    paddingRight: 16,
-    textAlign: "center",
-  },
-  card: {
-    backgroundColor: "#fff",
-    border: `1px solid ${colors.borde}`,
-    borderRadius: 12,
-    padding: 24,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: "50%",
-    backgroundColor: colors.primario,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#fff",
-    fontSize: 32,
-    fontWeight: 700,
-    margin: "0 auto 20px",
-  },
-  titulo: {
-    fontSize: 22,
-    color: colors.primario,
-    marginBottom: 20,
-    fontWeight: 700,
-  },
-  email: {
-    color: colors.texto,
-    marginBottom: 8,
-    fontSize: 14,
-  },
-  bio: {
-    color: colors.texto,
-    marginBottom: 12,
-    fontSize: 14,
-  },
-  info: {
-    color: colors.texto,
-    marginBottom: 8,
-    fontSize: 14,
-  },
-  activa: {
-    color: colors.exito,
-    marginBottom: 24,
-    fontSize: 16,
-  },
-  inactiva: {
-    color: colors.texto,
-    marginBottom: 24,
-    fontSize: 16,
-  },
-  boton: {
-    backgroundColor: colors.secundario,
-    color: "#fff",
-    padding: "12px 20px",
-    border: "none",
-    borderRadius: 10,
-    fontWeight: 600,
-    cursor: "pointer",
-    fontSize: 16,
-  },
-  botonSecundario: {
-    backgroundColor: colors.primario,
-    color: "#fff",
-    padding: "12px 20px",
-    border: "none",
-    borderRadius: 10,
-    fontWeight: 600,
-    cursor: "pointer",
-    fontSize: 16,
-    marginBottom: 12,
-  },
 }

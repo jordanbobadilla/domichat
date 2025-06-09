@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import axios from "axios"
 import Header from "../components/Header"
-import { colors } from "../constants/colors"
+import { temas } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
+import { ThemeContext } from "../context/ThemeContext"
 
 interface HistItem {
   id: string
@@ -12,6 +13,8 @@ interface HistItem {
 
 export default function Historial() {
   const [items, setItems] = useState<HistItem[]>([])
+  const { tema } = useContext(ThemeContext)
+  const colors = temas[tema]
 
   useEffect(() => {
     const sesion = verificarSesion()
@@ -24,6 +27,38 @@ export default function Historial() {
       .then((res) => setItems(res.data))
       .catch(() => {})
   }, [])
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    wrapper: {
+      maxWidth: 800,
+      margin: "auto",
+      paddingTop: 30,
+      paddingLeft: 16,
+      paddingRight: 16,
+      backgroundColor: colors.fondo,
+    },
+    titulo: {
+      color: colors.primario,
+      fontWeight: 700,
+      marginBottom: 20,
+    },
+    card: {
+      backgroundColor: colors.input,
+      border: `1px solid ${colors.borde}`,
+      borderRadius: 10,
+      padding: 14,
+      marginBottom: 12,
+    },
+    tituloChat: {
+      fontWeight: 600,
+      marginBottom: 4,
+      color: colors.texto,
+    },
+    fecha: {
+      color: colors.texto,
+      fontSize: 14,
+    },
+  }
 
   return (
     <>
@@ -48,34 +83,4 @@ export default function Historial() {
       </div>
     </>
   )
-}
-
-const styles: { [key: string]: React.CSSProperties } = {
-  wrapper: {
-    maxWidth: 800,
-    margin: "auto",
-    paddingTop: 30,
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-  titulo: {
-    color: colors.primario,
-    fontWeight: 700,
-    marginBottom: 20,
-  },
-  card: {
-    backgroundColor: "#fff",
-    border: `1px solid ${colors.borde}`,
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 12,
-  },
-  tituloChat: {
-    fontWeight: 600,
-    marginBottom: 4,
-  },
-  fecha: {
-    color: colors.texto,
-    fontSize: 14,
-  },
 }
