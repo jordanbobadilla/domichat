@@ -144,8 +144,9 @@ export default function HistorialScreen({ navigation }: any) {
   }
 
   return (
-    <ScrollView style={{ backgroundColor: colors.fondo, padding: 16 }}>
+    <View style={{ flex: 1, backgroundColor: colors.fondo }}>
       <Header titulo="Historial" />
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
       {historial.map((item) => (
         <View
           key={item.id}
@@ -241,7 +242,8 @@ export default function HistorialScreen({ navigation }: any) {
           </View>
         </View>
       </Modal>
-    </ScrollView>
+      </ScrollView>
+    </View>
   )
 }
 
