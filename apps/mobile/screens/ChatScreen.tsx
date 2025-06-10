@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native"
-import { BASE_URL, getHistorial } from "../services/api"
+import { BASE_URL } from "../services/api"
 import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Speech from "expo-speech"
@@ -54,9 +54,24 @@ export default function ChatScreen({ route }: any) {
 
   useEffect(() => {
     if (!mensajes.length && !mensajePrevio && !respuestaPrevio && token) {
-      getHistorial(token)
-        .then((data) => setHistorial((data as any).historial || data))
-        .catch(console.error)
+      axios
+        .get(`${BASE_URL}/chat/activo`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setHistorial(res.data))
+        .catch(() => {})
+
+      // @ts-ignore EventSource puede no existir en algunos entornos
+      const ev = new EventSource(`${BASE_URL}/chat/stream?token=${token}`)
+      ev.onmessage = (e: MessageEvent) => {
+        const data = JSON.parse(e.data)
+        if (data.tipo === "mensaje") {
+          setHistorial((h) => [...h, data.mensaje])
+        } else if (data.tipo === "reset") {
+          setHistorial([])
+        }
+      }
+      return () => ev.close()
     }
 
     AsyncStorage.getItem("voz_dominicana").then((voz) => {
@@ -117,15 +132,11 @@ export default function ChatScreen({ route }: any) {
       )
 
       const nuevaRespuesta = res.data.respuesta
+      // El mensaje nuevo llegará vía SSE
       const nuevoHistorial = [
         ...historial,
-        {
-          mensaje,
-          respuesta: nuevaRespuesta,
-          creadoEn: new Date().toISOString(),
-        },
+        { mensaje, respuesta: nuevaRespuesta, creadoEn: new Date().toISOString() },
       ]
-      setHistorial(nuevoHistorial)
       setMensaje("")
       reproducirVoz(nuevaRespuesta)
 
@@ -139,12 +150,22 @@ export default function ChatScreen({ route }: any) {
     }
   }
 
+  const nuevoChat = async () => {
+    if (historial.length > 0) {
+      await guardarNuevoHistorial(historial)
+    }
+    setHistorial([])
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "height" : "height"}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
-      <Header titulo={`Hola, ${nombre.split(" ")[0]} 👋`} />
+      <Header
+        titulo={`Hola, ${nombre.split(" ")[0]} 👋`}
+        onNewChat={nuevoChat}
+      />
       {historial.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={[styles.emptyTitulo, { color: colors.texto }]}>

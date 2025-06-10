@@ -6,6 +6,8 @@ import {
 } from "../controllers/chat_rag"
 import prisma from "../db/prisma"
 import OpenAI from "openai"
+import { sseHandler, broadcastToUser } from "../utils/sse"
+import { verificarToken } from "../utils/jwt"
 
 const router = express.Router()
 let datasetCargado = false
@@ -13,6 +15,22 @@ let datasetCargado = false
 // Cliente OpenAI
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+})
+
+// Conexión SSE para actualizaciones en tiempo real
+router.get("/stream", (req, res) => {
+  const token = req.query.token as string
+  if (!token) {
+    res.status(401).end()
+    return
+  }
+  try {
+    const usuario = verificarToken(token)
+    ;(req as any).usuario = usuario
+    sseHandler(req, res)
+  } catch {
+    res.status(403).end()
+  }
 })
 
 router.post("/", autenticarToken, async (req, res) => {
@@ -45,7 +63,7 @@ router.post("/", autenticarToken, async (req, res) => {
     }
 
     if (respGPT) {
-      await prisma.chat.create({
+      const nuevo = await prisma.chat.create({
         data: {
           usuarioId: (req as any).usuario.id,
           mensaje,
@@ -53,6 +71,10 @@ router.post("/", autenticarToken, async (req, res) => {
         },
       })
 
+      broadcastToUser((req as any).usuario.id, {
+        tipo: "mensaje",
+        mensaje: nuevo,
+      })
       res.json({ respuesta: respGPT, fuente: "gpt" })
       return
     }
@@ -65,7 +87,7 @@ router.post("/", autenticarToken, async (req, res) => {
     const { respuesta: respLocal, score } =
       responderDesdeDatasetConScore(mensaje)
 
-    await prisma.chat.create({
+    const nuevo = await prisma.chat.create({
       data: {
         usuarioId: (req as any).usuario.id,
         mensaje,
@@ -73,6 +95,10 @@ router.post("/", autenticarToken, async (req, res) => {
       },
     })
 
+    broadcastToUser((req as any).usuario.id, {
+      tipo: "mensaje",
+      mensaje: nuevo,
+    })
     res.json({ respuesta: respLocal, fuente: "dataset", score })
     return
   } catch (err: any) {
@@ -99,6 +125,27 @@ router.get("/historial", autenticarToken, async (req, res) => {
   }
 })
 
+// Obtener el chat activo (mensajes después del último historial guardado)
+router.get("/activo", autenticarToken, async (req, res) => {
+  const userId = (req as any).usuario.id
+
+  try {
+    const ultimo = await prisma.historial.findFirst({
+      where: { usuarioId: userId },
+      orderBy: { fecha: "desc" },
+    })
+    const desde = ultimo?.fecha || new Date(0)
+    const chats = await prisma.chat.findMany({
+      where: { usuarioId: userId, creadoEn: { gt: desde } },
+      orderBy: { creadoEn: "asc" },
+    })
+    res.json(chats)
+  } catch (error) {
+    console.error("Error al obtener chat activo:", error)
+    res.status(500).json({ error: "Error al obtener chat activo" })
+  }
+})
+
 router.post("/historial", autenticarToken, async (req, res) => {
   const userId = (req as any).usuario.id
   const { titulo, fecha, mensajes } = req.body
@@ -112,6 +159,7 @@ router.post("/historial", autenticarToken, async (req, res) => {
         mensajes: mensajes,
       },
     })
+    broadcastToUser(userId, { tipo: "reset" })
     res.json(historial)
     return
   } catch (error) {
