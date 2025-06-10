@@ -221,6 +221,28 @@ export default function Chat() {
       fontWeight: 600,
       cursor: "pointer",
     },
+    emptyContainer: {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 24,
+      textAlign: "center",
+    },
+    emptyTitulo: {
+      fontSize: 20,
+      fontWeight: 700,
+      marginBottom: 12,
+      textAlign: "center",
+      color: colors.texto,
+    },
+    emptyTexto: {
+      fontSize: 14,
+      textAlign: "center",
+      lineHeight: "20px",
+      color: colors.gris,
+    },
   }
 
   return (
@@ -229,26 +251,35 @@ export default function Chat() {
       <div style={styles.wrapper}>
         <h2 style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</h2>
 
-        <div ref={chatRef} style={styles.chatBox}>
-          {historial.map((h, i) => (
-            <div key={i}>
-              <div
-                style={{
-                  ...styles.mensajeUsuario,
-                  backgroundColor:
-                    i % 2 === 0 ? colors.primario : colors.secundario,
-                }}
-              >
-                <p style={{ color: "#fff", margin: 0 }}>{h.mensaje}</p>
-              </div>
-              <div style={styles.mensajeBot}>
-                <div style={{ color: "#000" }}>
-                  <ReactMarkdown>{h.respuesta}</ReactMarkdown>
+        {historial.length === 0 ? (
+          <div style={styles.emptyContainer}>
+            <h3 style={styles.emptyTitulo}>¡Bienvenido a DomiChat!</h3>
+            <p style={styles.emptyTexto}>
+              Comienza escribiendo tu primera pregunta o mensaje.
+            </p>
+          </div>
+        ) : (
+          <div ref={chatRef} style={styles.chatBox}>
+            {historial.map((h, i) => (
+              <div key={i}>
+                <div
+                  style={{
+                    ...styles.mensajeUsuario,
+                    backgroundColor:
+                      i % 2 === 0 ? colors.primario : colors.secundario,
+                  }}
+                >
+                  <p style={{ color: "#fff", margin: 0 }}>{h.mensaje}</p>
+                </div>
+                <div style={styles.mensajeBot}>
+                  <div style={{ color: "#000" }}>
+                    <ReactMarkdown>{h.respuesta}</ReactMarkdown>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div style={styles.inputBox}>
           <input

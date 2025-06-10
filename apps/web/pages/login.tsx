@@ -33,8 +33,12 @@ export default function Login() {
 
       // Redirigir al chat
       router.push("/chat")
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Error al iniciar sesión")
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Error al iniciar sesión")
+      } else {
+        setError("Error al iniciar sesión")
+      }
     } finally {
       setCargando(false)
     }

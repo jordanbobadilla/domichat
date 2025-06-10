@@ -35,8 +35,12 @@ export default function Registro() {
       localStorage.setItem("email", data.email)
 
       router.push("/chat")
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Error al registrarse")
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Error al registrarse")
+      } else {
+        setError("Error al registrarse")
+      }
     } finally {
       setCargando(false)
     }
