@@ -53,10 +53,25 @@ export default function ChatScreen({ route }: any) {
   const colors = temas[tema]
 
   useEffect(() => {
-    if (!mensajes.length && !mensajePrevio && !respuestaPrevio) {
-      AsyncStorage.getItem("chat_activo").then((data) => {
-        if (data) setHistorial(JSON.parse(data))
-      })
+    if (!mensajes.length && !mensajePrevio && !respuestaPrevio && token) {
+      axios
+        .get(`${BASE_URL}/chat/activo`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setHistorial(res.data))
+        .catch(() => {})
+
+      // @ts-ignore EventSource puede no existir en algunos entornos
+      const ev = new EventSource(`${BASE_URL}/chat/stream?token=${token}`)
+      ev.onmessage = (e: MessageEvent) => {
+        const data = JSON.parse(e.data)
+        if (data.tipo === "mensaje") {
+          setHistorial((h) => [...h, data.mensaje])
+        } else if (data.tipo === "reset") {
+          setHistorial([])
+        }
+      }
+      return () => ev.close()
     }
 
     AsyncStorage.getItem("voz_dominicana").then((voz) => {
@@ -121,15 +136,11 @@ export default function ChatScreen({ route }: any) {
       )
 
       const nuevaRespuesta = res.data.respuesta
+      // El mensaje nuevo llegará vía SSE
       const nuevoHistorial = [
         ...historial,
-        {
-          mensaje,
-          respuesta: nuevaRespuesta,
-          creadoEn: new Date().toISOString(),
-        },
+        { mensaje, respuesta: nuevaRespuesta, creadoEn: new Date().toISOString() },
       ]
-      setHistorial(nuevoHistorial)
       setMensaje("")
       reproducirVoz(nuevaRespuesta)
 
@@ -148,7 +159,6 @@ export default function ChatScreen({ route }: any) {
       await guardarNuevoHistorial(historial)
     }
     setHistorial([])
-    await AsyncStorage.removeItem("chat_activo")
   }
 
   return (

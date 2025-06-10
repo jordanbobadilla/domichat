@@ -57,10 +57,29 @@ export default function Chat() {
     setNombre(sesion.nombre)
 
     if (!historialQuery && !mensajePrevio && !respuestaPrevio) {
-      const guardado = localStorage.getItem("chat_activo")
-      if (guardado) setHistorial(JSON.parse(guardado))
+      axios
+        .get("http://localhost:4000/api/chat/activo", {
+          headers: { Authorization: `Bearer ${sesion.token}` },
+        })
+        .then((r) => setHistorial(r.data))
+        .catch(() => {})
+
+      const ev = new EventSource(
+        `http://localhost:4000/api/chat/stream?token=${sesion.token}`
+      )
+      ev.onmessage = (e) => {
+        const data = JSON.parse(e.data)
+        if (data.tipo === "mensaje") {
+          setHistorial((h) => [...h, data.mensaje])
+        } else if (data.tipo === "reset") {
+          setHistorial([])
+        }
+      }
+      return () => {
+        ev.close()
+      }
     } else {
-      localStorage.setItem("chat_activo", JSON.stringify(historialInicial))
+      setHistorial(historialInicial)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historialQuery, mensajePrevio, respuestaPrevio])
@@ -114,15 +133,7 @@ export default function Chat() {
         voz
       )
 
-      // Agregar al historial
-      setHistorial([
-        ...historial,
-        {
-          mensaje,
-          respuesta: respuestaAdaptada,
-          creadoEn: new Date().toISOString(),
-        },
-      ])
+      // La respuesta llegará vía SSE
 
       // Hablar
       hablar(respuestaAdaptada)
@@ -150,7 +161,6 @@ export default function Chat() {
       }
     }
     setHistorial([])
-    localStorage.removeItem("chat_activo")
   }
 
   const styles: { [key: string]: React.CSSProperties } = {
