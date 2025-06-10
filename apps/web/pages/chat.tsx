@@ -6,6 +6,7 @@ import { verificarSesion } from "../services/auth"
 import Header from "../components/Header"
 import { ThemeContext } from "../context/ThemeContext"
 import ReactMarkdown from "react-markdown"
+import { guardarHistorial } from "../services/chat"
 
 interface Mensaje {
   mensaje: string
@@ -57,11 +58,28 @@ export default function Chat() {
 
     if (!historialQuery && !mensajePrevio && !respuestaPrevio) {
       axios
-        .get("http://localhost:4000/api/chat/historial", {
+        .get("http://localhost:4000/api/chat/activo", {
           headers: { Authorization: `Bearer ${sesion.token}` },
         })
-        .then((res) => setHistorial(res.data))
+        .then((r) => setHistorial(r.data))
         .catch(() => {})
+
+      const ev = new EventSource(
+        `http://localhost:4000/api/chat/stream?token=${sesion.token}`
+      )
+      ev.onmessage = (e) => {
+        const data = JSON.parse(e.data)
+        if (data.tipo === "mensaje") {
+          setHistorial((h) => [...h, data.mensaje])
+        } else if (data.tipo === "reset") {
+          setHistorial([])
+        }
+      }
+      return () => {
+        ev.close()
+      }
+    } else {
+      setHistorial(historialInicial)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historialQuery, mensajePrevio, respuestaPrevio])
@@ -111,15 +129,7 @@ export default function Chat() {
         voz
       )
 
-      // Agregar al historial
-      setHistorial([
-        ...historial,
-        {
-          mensaje,
-          respuesta: respuestaAdaptada,
-          creadoEn: new Date().toISOString(),
-        },
-      ])
+      // La respuesta llegará vía SSE
 
       // Hablar
       hablar(respuestaAdaptada)
@@ -136,6 +146,17 @@ export default function Chat() {
     } finally {
       setCargando(false)
     }
+  }
+
+  const nuevoChat = async () => {
+    if (historial.length > 0) {
+      try {
+        await guardarHistorial(token, historial)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+    setHistorial([])
   }
 
   const styles: { [key: string]: React.CSSProperties } = {
@@ -155,6 +176,21 @@ export default function Chat() {
       color: colors.primario,
       fontWeight: 700,
       marginBottom: 20,
+    },
+    tituloRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: 20,
+    },
+    botonNuevo: {
+      backgroundColor: colors.secundario,
+      color: "#fff",
+      border: "none",
+      padding: "8px 12px",
+      borderRadius: 8,
+      fontWeight: 600,
+      cursor: "pointer",
     },
     chatBox: {
       flex: 1,
@@ -260,7 +296,10 @@ export default function Chat() {
     <>
       <Header />
       <div style={styles.wrapper}>
-        <h2 style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</h2>
+        <div style={styles.tituloRow}>
+          <h2 style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</h2>
+          <button onClick={nuevoChat} style={styles.botonNuevo}>Nuevo chat</button>
+        </div>
 
         {historial.length === 0 ? (
           <div style={styles.emptyContainer}>

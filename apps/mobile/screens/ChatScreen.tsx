@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native"
-import { BASE_URL, getHistorial } from "../services/api"
+import { BASE_URL } from "../services/api"
 import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Speech from "expo-speech"
@@ -19,6 +19,12 @@ import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
 import Header from "../components/Header"
 import Markdown from "react-native-markdown-display"
+
+export interface Mensaje {
+  mensaje: string
+  respuesta: string
+  creadoEn: string
+}
 
 export default function ChatScreen({ route }: any) {
   const params = route?.params || {}
@@ -30,9 +36,9 @@ export default function ChatScreen({ route }: any) {
     mensajes = [],
   } = params
 
-  const historialInicial =
+  const historialInicial: Mensaje[] =
     mensajes && mensajes.length > 0
-      ? mensajes
+      ? (mensajes as Mensaje[])
       : mensajePrevio && respuestaPrevio
       ? [
           {
@@ -44,7 +50,7 @@ export default function ChatScreen({ route }: any) {
       : []
 
   const [mensaje, setMensaje] = useState("")
-  const [historial, setHistorial] = useState(historialInicial)
+  const [historial, setHistorial] = useState<Mensaje[]>(historialInicial)
   const [cargando, setCargando] = useState(false)
   const scrollRef = useRef<ScrollView>(null)
   const [vozDominicana, setVozDominicana] = useState("popi")
@@ -54,9 +60,24 @@ export default function ChatScreen({ route }: any) {
 
   useEffect(() => {
     if (!mensajes.length && !mensajePrevio && !respuestaPrevio && token) {
-      getHistorial(token)
-        .then((data) => setHistorial((data as any).historial || data))
-        .catch(console.error)
+      axios
+        .get(`${BASE_URL}/chat/activo`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => setHistorial(res.data))
+        .catch(() => {})
+
+      // @ts-ignore EventSource puede no existir en algunos entornos
+      const ev = new EventSource(`${BASE_URL}/chat/stream?token=${token}`)
+        ev.onmessage = (e: MessageEvent) => {
+          const data = JSON.parse(e.data)
+          if (data.tipo === "mensaje") {
+            setHistorial((h: Mensaje[]) => [...h, data.mensaje as Mensaje])
+          } else if (data.tipo === "reset") {
+            setHistorial([])
+          }
+      }
+      return () => ev.close()
     }
 
     AsyncStorage.getItem("voz_dominicana").then((voz) => {
@@ -117,15 +138,11 @@ export default function ChatScreen({ route }: any) {
       )
 
       const nuevaRespuesta = res.data.respuesta
+      // El mensaje nuevo llegará vía SSE
       const nuevoHistorial = [
         ...historial,
-        {
-          mensaje,
-          respuesta: nuevaRespuesta,
-          creadoEn: new Date().toISOString(),
-        },
+        { mensaje, respuesta: nuevaRespuesta, creadoEn: new Date().toISOString() },
       ]
-      setHistorial(nuevoHistorial)
       setMensaje("")
       reproducirVoz(nuevaRespuesta)
 
@@ -139,12 +156,22 @@ export default function ChatScreen({ route }: any) {
     }
   }
 
+  const nuevoChat = async () => {
+    if (historial.length > 0) {
+      await guardarNuevoHistorial(historial)
+    }
+    setHistorial([])
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "height" : "height"}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
-      <Header titulo={`Hola, ${nombre.split(" ")[0]} 👋`} />
+      <Header
+        titulo={`Hola, ${nombre.split(" ")[0]} 👋`}
+        onNewChat={nuevoChat}
+      />
       {historial.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={[styles.emptyTitulo, { color: colors.texto }]}>
@@ -162,7 +189,7 @@ export default function ChatScreen({ route }: any) {
             scrollRef.current?.scrollToEnd({ animated: true })
           }
         >
-          {historial.map((item, index) => (
+          {historial.map((item: Mensaje, index: number) => (
             <View key={index}>
               <View
                 style={[
