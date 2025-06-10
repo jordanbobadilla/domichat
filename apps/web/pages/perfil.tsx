@@ -15,7 +15,6 @@ export default function Perfil() {
   const router = useRouter()
   const [nombre, setNombre] = useState("")
   const [email, setEmail] = useState("")
-  const [token, setToken] = useState("")
   const [estado, setEstado] = useState<EstadoSuscripcion | null>(null)
   const { tema } = useContext(ThemeContext)
   const colors = temas[tema]
@@ -24,7 +23,6 @@ export default function Perfil() {
     const sesion = verificarSesion()
     if (!sesion) return
 
-    setToken(sesion.token)
     setNombre(sesion.nombre)
     if (sesion.email) setEmail(sesion.email)
 
