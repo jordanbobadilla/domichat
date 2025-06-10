@@ -20,6 +20,12 @@ import { temas } from "../constants/colors"
 import Header from "../components/Header"
 import Markdown from "react-native-markdown-display"
 
+export interface Mensaje {
+  mensaje: string
+  respuesta: string
+  creadoEn: string
+}
+
 export default function ChatScreen({ route }: any) {
   const params = route?.params || {}
   const {
@@ -30,9 +36,9 @@ export default function ChatScreen({ route }: any) {
     mensajes = [],
   } = params
 
-  const historialInicial =
+  const historialInicial: Mensaje[] =
     mensajes && mensajes.length > 0
-      ? mensajes
+      ? (mensajes as Mensaje[])
       : mensajePrevio && respuestaPrevio
       ? [
           {
@@ -44,7 +50,7 @@ export default function ChatScreen({ route }: any) {
       : []
 
   const [mensaje, setMensaje] = useState("")
-  const [historial, setHistorial] = useState(historialInicial)
+  const [historial, setHistorial] = useState<Mensaje[]>(historialInicial)
   const [cargando, setCargando] = useState(false)
   const scrollRef = useRef<ScrollView>(null)
   const [vozDominicana, setVozDominicana] = useState("popi")
@@ -63,13 +69,13 @@ export default function ChatScreen({ route }: any) {
 
       // @ts-ignore EventSource puede no existir en algunos entornos
       const ev = new EventSource(`${BASE_URL}/chat/stream?token=${token}`)
-      ev.onmessage = (e: MessageEvent) => {
-        const data = JSON.parse(e.data)
-        if (data.tipo === "mensaje") {
-          setHistorial((h) => [...h, data.mensaje])
-        } else if (data.tipo === "reset") {
-          setHistorial([])
-        }
+        ev.onmessage = (e: MessageEvent) => {
+          const data = JSON.parse(e.data)
+          if (data.tipo === "mensaje") {
+            setHistorial((h: Mensaje[]) => [...h, data.mensaje as Mensaje])
+          } else if (data.tipo === "reset") {
+            setHistorial([])
+          }
       }
       return () => ev.close()
     }
@@ -187,7 +193,7 @@ export default function ChatScreen({ route }: any) {
             scrollRef.current?.scrollToEnd({ animated: true })
           }
         >
-          {historial.map((item, index) => (
+          {historial.map((item: Mensaje, index: number) => (
             <View key={index}>
               <View
                 style={[
