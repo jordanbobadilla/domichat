@@ -84,6 +84,10 @@ export default function Chat() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historialQuery, mensajePrevio, respuestaPrevio])
 
+  useEffect(() => {
+    localStorage.setItem("chat_activo", JSON.stringify(historial))
+  }, [historial])
+
   function modificarRespuestaSegunVoz(texto: string, voz: string): string {
     switch (voz) {
       case "popi":
