@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native"
-import { BASE_URL, getHistorial } from "../services/api"
+import { BASE_URL } from "../services/api"
 import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Speech from "expo-speech"
@@ -53,10 +53,10 @@ export default function ChatScreen({ route }: any) {
   const colors = temas[tema]
 
   useEffect(() => {
-    if (!mensajes.length && !mensajePrevio && !respuestaPrevio && token) {
-      getHistorial(token)
-        .then((data) => setHistorial((data as any).historial || data))
-        .catch(console.error)
+    if (!mensajes.length && !mensajePrevio && !respuestaPrevio) {
+      AsyncStorage.getItem("chat_activo").then((data) => {
+        if (data) setHistorial(JSON.parse(data))
+      })
     }
 
     AsyncStorage.getItem("voz_dominicana").then((voz) => {
@@ -64,6 +64,10 @@ export default function ChatScreen({ route }: any) {
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    AsyncStorage.setItem("chat_activo", JSON.stringify(historial))
+  }, [historial])
 
   const reproducirVoz = (texto: string) => {
     let opciones: Speech.SpeechOptions = {
@@ -139,12 +143,23 @@ export default function ChatScreen({ route }: any) {
     }
   }
 
+  const nuevoChat = async () => {
+    if (historial.length > 0) {
+      await guardarNuevoHistorial(historial)
+    }
+    setHistorial([])
+    await AsyncStorage.removeItem("chat_activo")
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "height" : "height"}
       style={{ flex: 1, backgroundColor: colors.fondo }}
     >
-      <Header titulo={`Hola, ${nombre.split(" ")[0]} 👋`} />
+      <Header
+        titulo={`Hola, ${nombre.split(" ")[0]} 👋`}
+        onNewChat={nuevoChat}
+      />
       {historial.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={[styles.emptyTitulo, { color: colors.texto }]}>
