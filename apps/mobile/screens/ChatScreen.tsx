@@ -86,6 +86,10 @@ export default function ChatScreen({ route }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    AsyncStorage.setItem("chat_activo", JSON.stringify(historial))
+  }, [historial])
+
   const reproducirVoz = (texto: string) => {
     let opciones: Speech.SpeechOptions = {
       language: "es-DO",
