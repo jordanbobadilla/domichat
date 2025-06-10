@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useContext } from "react"
+import { useRouter } from "next/router"
 import axios from "axios"
 import { temas } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
@@ -13,10 +14,28 @@ interface Mensaje {
 }
 
 export default function Chat() {
+  const router = useRouter()
+  const { mensajePrevio = "", respuestaPrevio = "" } = router.query as {
+    mensajePrevio?: string
+    respuestaPrevio?: string
+  }
+
+  const historialInicial:
+    | Mensaje[]
+    | (() => Mensaje[]) = mensajePrevio && respuestaPrevio
+    ? [
+        {
+          mensaje: decodeURIComponent(mensajePrevio as string),
+          respuesta: decodeURIComponent(respuestaPrevio as string),
+          creadoEn: new Date().toISOString(),
+        },
+      ]
+    : []
+
   const [nombre, setNombre] = useState("")
   const [token, setToken] = useState("")
   const [mensaje, setMensaje] = useState("")
-  const [historial, setHistorial] = useState<Mensaje[]>([])
+  const [historial, setHistorial] = useState<Mensaje[]>(historialInicial)
   const [cargando, setCargando] = useState(false)
   const chatRef = useRef<HTMLDivElement>(null)
   const { tema } = useContext(ThemeContext)
@@ -29,13 +48,16 @@ export default function Chat() {
     setToken(sesion.token)
     setNombre(sesion.nombre)
 
-    axios
-      .get("http://localhost:4000/api/chat/historial", {
-        headers: { Authorization: `Bearer ${sesion.token}` },
-      })
-      .then((res) => setHistorial(res.data))
-      .catch(() => {})
-  }, [])
+    if (!mensajePrevio && !respuestaPrevio) {
+      axios
+        .get("http://localhost:4000/api/chat/historial", {
+          headers: { Authorization: `Bearer ${sesion.token}` },
+        })
+        .then((res) => setHistorial(res.data))
+        .catch(() => {})
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mensajePrevio, respuestaPrevio])
 
   function modificarRespuestaSegunVoz(texto: string, voz: string): string {
     switch (voz) {
