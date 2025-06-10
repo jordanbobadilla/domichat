@@ -119,6 +119,7 @@ router.post("/historial", autenticarToken, async (req, res) => {
   }
 })
 
+// Ruta para renombrar un chat del historial
 router.put("/historial/:id", autenticarToken, async (req, res) => {
   const { id } = req.params
   const { nuevoTitulo } = req.body
@@ -133,21 +134,6 @@ router.put("/historial/:id", autenticarToken, async (req, res) => {
     return
   } catch (error) {
     res.status(500).json({ error: "Error al renombrar historial" })
-  }
-})
-
-router.delete("/historial/:id", autenticarToken, async (req, res) => {
-  const { id } = req.params
-  const userId = (req as any).usuario.id
-
-  try {
-    await prisma.historial.deleteMany({
-      where: { id, usuarioId: userId },
-    })
-    res.json({ eliminado: true })
-    return
-  } catch (error) {
-    res.status(500).json({ error: "Error al eliminar historial" })
   }
 })
 
@@ -166,5 +152,21 @@ router.delete("/historial/todo", autenticarToken, async (req, res) => {
     res.status(500).json({ error: "Error al eliminar todo el historial" })
   }
 })
+
+// Eliminar un elemento específico del historial
+router.delete("/historial/:id", autenticarToken, async (req, res) => {
+  const { id } = req.params
+  const userId = (req as any).usuario.id
+
+  try {
+    await prisma.historial.deleteMany({
+      where: { id, usuarioId: userId },
+    })
+    res.json({ eliminado: true })
+    return
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar historial" })
+  }
+  })
 
 export default router
