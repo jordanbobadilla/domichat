@@ -113,7 +113,7 @@ export default function Chat() {
     wrapper: {
       maxWidth: 800,
       margin: "auto",
-      paddingTop: 30,
+      paddingTop: 70,
       paddingLeft: 16,
       paddingRight: 16,
       display: "flex",
@@ -130,7 +130,7 @@ export default function Chat() {
     chatBox: {
       flex: 1,
       overflowY: "auto",
-      paddingBottom: 20,
+      paddingBottom: 100,
     },
     card: {
       backgroundColor: colors.input,
@@ -169,8 +169,17 @@ export default function Chat() {
     inputBox: {
       display: "flex",
       gap: 8,
-      paddingTop: 10,
+      padding: "10px 16px",
       borderTop: `1px solid ${colors.borde}`,
+      position: "fixed",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: colors.fondo,
+      maxWidth: 800,
+      margin: "auto",
+      width: "100%",
+      boxSizing: "border-box",
     },
     input: {
       flex: 1,
