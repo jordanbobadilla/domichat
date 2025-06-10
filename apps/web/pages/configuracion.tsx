@@ -38,7 +38,7 @@ export default function Configuracion() {
     wrapper: {
       maxWidth: 500,
       margin: "auto",
-      paddingTop: 40,
+      paddingTop: 70,
       paddingLeft: 16,
       paddingRight: 16,
       backgroundColor: colors.fondo,

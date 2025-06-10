@@ -45,7 +45,7 @@ export default function Perfil() {
     wrapper: {
       maxWidth: 400,
       margin: "auto",
-      paddingTop: "12vh",
+      paddingTop: 70,
       paddingLeft: 16,
       paddingRight: 16,
       textAlign: "center",

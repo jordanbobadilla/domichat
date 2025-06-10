@@ -107,7 +107,7 @@ export default function Historial() {
     wrapper: {
       maxWidth: 800,
       margin: "auto",
-      paddingTop: 30,
+      paddingTop: 70,
       paddingLeft: 16,
       paddingRight: 16,
       backgroundColor: colors.fondo,

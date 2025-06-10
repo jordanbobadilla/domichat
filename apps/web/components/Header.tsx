@@ -12,6 +12,11 @@ export default function Header() {
 
   const styles: { [key: string]: React.CSSProperties } = {
     header: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1000,
       backgroundColor: colors.primario,
       borderBottom: `1px solid ${colors.primario}`,
       paddingLeft: 16,
@@ -21,6 +26,10 @@ export default function Header() {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
+      maxWidth: 800,
+      margin: "auto",
+      width: "100%",
+      boxSizing: "border-box",
     },
     left: {
       display: "flex",
