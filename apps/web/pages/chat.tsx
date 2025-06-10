@@ -182,6 +182,10 @@ export default function Chat() {
       padding: 10,
       borderRadius: 10,
       marginBottom: 8,
+      alignSelf: "flex-end",
+      maxWidth: 250,
+      width: "fit-content",
+      display: "inline-block",
     },
     mensajeBot: {
       padding: 10,
