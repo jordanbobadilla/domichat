@@ -27,10 +27,13 @@ export default function ChatScreen({ route }: any) {
     nombre = "",
     mensajePrevio = "",
     respuestaPrevio = "",
+    mensajes = [],
   } = params
 
   const historialInicial =
-    mensajePrevio && respuestaPrevio
+    mensajes && mensajes.length > 0
+      ? mensajes
+      : mensajePrevio && respuestaPrevio
       ? [
           {
             mensaje: mensajePrevio,
@@ -50,16 +53,17 @@ export default function ChatScreen({ route }: any) {
   const colors = temas[tema]
 
   useEffect(() => {
-    if (!mensajePrevio && !respuestaPrevio && token) {
+    if (!mensajes.length && !mensajePrevio && !respuestaPrevio && token) {
       getHistorial(token)
-        .then((data) => setHistorial(data.historial || []))
+        .then((data) => setHistorial((data as any).historial || data))
         .catch(console.error)
     }
 
     AsyncStorage.getItem("voz_dominicana").then((voz) => {
       if (voz) setVozDominicana(voz)
     })
-  }, [historial])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const reproducirVoz = (texto: string) => {
     let opciones: Speech.SpeechOptions = {
