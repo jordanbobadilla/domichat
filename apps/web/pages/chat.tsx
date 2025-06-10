@@ -204,7 +204,8 @@ export default function Chat() {
               <div
                 style={{
                   ...styles.mensajeUsuario,
-                  backgroundColor: i % 2 === 0 ? colors.primario : colors.secundario,
+                  backgroundColor:
+                    i % 2 === 0 ? colors.primario : colors.secundario,
                 }}
               >
                 <p style={{ color: "#fff", margin: 0 }}>{h.mensaje}</p>

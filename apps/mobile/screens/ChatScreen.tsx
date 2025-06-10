@@ -59,7 +59,7 @@ export default function ChatScreen({ route }: any) {
     AsyncStorage.getItem("voz_dominicana").then((voz) => {
       if (voz) setVozDominicana(voz)
     })
-  }, [])
+  }, [historial])
 
   const reproducirVoz = (texto: string) => {
     let opciones: Speech.SpeechOptions = {

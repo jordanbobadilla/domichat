@@ -31,7 +31,7 @@ export default function HistorialScreen({ navigation }: any) {
 
   useEffect(() => {
     cargarHistorial()
-  }, [])
+  }, [historial])
 
   const cargarHistorial = async () => {
     try {
@@ -210,7 +210,7 @@ export default function HistorialScreen({ navigation }: any) {
         )}
         ListFooterComponent={
           <TouchableOpacity
-            style={[styles.botonReset, { backgroundColor: colors.gris }]}
+            style={[styles.botonReset, { backgroundColor: colors.secundario }]}
             onPress={eliminarTodoElHistorial}
           >
             <Text style={styles.textoBoton}>Eliminar todo el historial</Text>

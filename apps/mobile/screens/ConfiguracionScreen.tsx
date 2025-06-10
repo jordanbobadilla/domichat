@@ -65,9 +65,7 @@ export default function ConfiguracionScreen() {
               styles.opcion,
               {
                 backgroundColor:
-                  vozSeleccionada === item.id
-                    ? colors.primario
-                    : colors.secundario,
+                  vozSeleccionada === item.id ? colors.primario : colors.input,
               },
             ]}
             onPress={() => seleccionarVoz(item.id)}

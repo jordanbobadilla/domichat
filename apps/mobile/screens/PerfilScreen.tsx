@@ -13,6 +13,7 @@ import { ROUTES } from "../constants/routes"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
 import { useNavigation } from "@react-navigation/native"
+import Header from "../components/Header"
 
 export default function PerfilScreen({ route, navigation }: any) {
   const [nombre, setNombre] = useState("")
@@ -72,47 +73,60 @@ export default function PerfilScreen({ route, navigation }: any) {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.fondo }]}>
-      <View style={styles.card}>
-        {foto ? (
-          <Image source={{ uri: foto }} style={styles.avatar} />
-        ) : (
-          <View
-            style={[styles.avatarPlaceholder, { backgroundColor: colors.primario }]}
-          >
-            <Text style={styles.avatarInicial}>{nombre.charAt(0)}</Text>
-          </View>
-        )}
-
-        <Text style={[styles.nombre, { color: colors.texto }]}>{nombre}</Text>
-        {email ? (
-          <Text style={[styles.email, { color: colors.gris }]}>{email}</Text>
-        ) : null}
-
-        <View style={styles.suscripcionBox}>
-          <Text style={[styles.subTitulo, { color: colors.texto }]}>Estado de suscripción</Text>
-          {suscripcion?.activa ? (
-            <Text style={{ color: colors.exito }}>
-              Activa hasta {suscripcion.expiracion}
-            </Text>
+    <View style={{ flex: 1, backgroundColor: colors.fondo }}>
+      <Header titulo="Perfil" />
+      <View style={[styles.container]}>
+        <View style={styles.card}>
+          {foto ? (
+            <Image source={{ uri: foto }} style={styles.avatar} />
           ) : (
-            <Text style={{ color: colors.peligro }}>No tienes suscripción activa</Text>
+            <View
+              style={[
+                styles.avatarPlaceholder,
+                { backgroundColor: colors.primario },
+              ]}
+            >
+              <Text style={styles.avatarInicial}>{nombre.charAt(0)}</Text>
+            </View>
           )}
+
+          <Text style={[styles.nombre, { color: colors.texto }]}>{nombre}</Text>
+          {email ? (
+            <Text style={[styles.email, { color: colors.gris }]}>{email}</Text>
+          ) : null}
+
+          <View style={styles.suscripcionBox}>
+            <Text style={[styles.subTitulo, { color: colors.texto }]}>
+              Estado de suscripción
+            </Text>
+            {suscripcion?.activa ? (
+              <Text style={{ color: colors.exito }}>
+                Activa hasta {suscripcion.expiracion}
+              </Text>
+            ) : (
+              <Text style={{ color: colors.peligro }}>
+                No tienes suscripción activa
+              </Text>
+            )}
+          </View>
+
+          <TouchableOpacity
+            style={[
+              styles.botonSecundario,
+              { backgroundColor: colors.primario },
+            ]}
+            onPress={() => navigation.navigate("Configuracion")}
+          >
+            <Text style={styles.botonTexto}>Configuración de DomiChat</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.botonCerrar, { backgroundColor: colors.peligro }]}
+            onPress={cerrarSesion}
+          >
+            <Text style={styles.botonTexto}>Cerrar sesión</Text>
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          style={[styles.botonSecundario, { backgroundColor: colors.primario }]}
-          onPress={() => navigation.navigate("Configuracion")}
-        >
-          <Text style={styles.botonTexto}>Configuración de DomiChat</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.botonCerrar, { backgroundColor: colors.peligro }]}
-          onPress={cerrarSesion}
-        >
-          <Text style={styles.botonTexto}>Cerrar sesión</Text>
-        </TouchableOpacity>
       </View>
     </View>
   )
@@ -123,7 +137,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 48,
     paddingLeft: 24,
     paddingRight: 24,
   },
