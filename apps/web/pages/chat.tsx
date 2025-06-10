@@ -15,14 +15,21 @@ interface Mensaje {
 
 export default function Chat() {
   const router = useRouter()
-  const { mensajePrevio = "", respuestaPrevio = "" } = router.query as {
+  const {
+    mensajePrevio = "",
+    respuestaPrevio = "",
+    historial: historialQuery = "",
+  } = router.query as {
     mensajePrevio?: string
     respuestaPrevio?: string
+    historial?: string
   }
 
   const historialInicial:
     | Mensaje[]
-    | (() => Mensaje[]) = mensajePrevio && respuestaPrevio
+    | (() => Mensaje[]) = historialQuery
+    ? JSON.parse(decodeURIComponent(historialQuery as string))
+    : mensajePrevio && respuestaPrevio
     ? [
         {
           mensaje: decodeURIComponent(mensajePrevio as string),
@@ -48,7 +55,7 @@ export default function Chat() {
     setToken(sesion.token)
     setNombre(sesion.nombre)
 
-    if (!mensajePrevio && !respuestaPrevio) {
+    if (!historialQuery && !mensajePrevio && !respuestaPrevio) {
       axios
         .get("http://localhost:4000/api/chat/historial", {
           headers: { Authorization: `Bearer ${sesion.token}` },
@@ -57,7 +64,7 @@ export default function Chat() {
         .catch(() => {})
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mensajePrevio, respuestaPrevio])
+  }, [historialQuery, mensajePrevio, respuestaPrevio])
 
   function modificarRespuestaSegunVoz(texto: string, voz: string): string {
     switch (voz) {

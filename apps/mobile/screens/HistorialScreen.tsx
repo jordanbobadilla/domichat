@@ -164,8 +164,7 @@ export default function HistorialScreen({ navigation }: any) {
                 const token = await AsyncStorage.getItem("token")
                 navigation.navigate(ROUTES.CHAT, {
                   token,
-                  mensajePrevio: item.mensajes[0]?.mensaje,
-                  respuestaPrevio: item.mensajes[0]?.respuesta,
+                  mensajes: item.mensajes,
                 })
               }}
             >

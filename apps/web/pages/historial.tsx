@@ -38,12 +38,10 @@ export default function Historial() {
   }, [])
 
   const abrirChat = (item: HistItem) => {
-    const primero = item.mensajes[0]
     router.push({
       pathname: "/chat",
       query: {
-        mensajePrevio: primero?.mensaje || "",
-        respuestaPrevio: primero?.respuesta || "",
+        historial: encodeURIComponent(JSON.stringify(item.mensajes)),
       },
     })
   }
