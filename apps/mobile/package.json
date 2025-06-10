@@ -21,6 +21,7 @@
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
     "react-native": "0.79.1",
+    "react-native-event-source": "^1.1.0",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-markdown-display": "^7.0.2",
     "react-native-reanimated": "~3.17.4",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
+    "@types/react-native-event-source": "^1.1.2",
     "typescript": "~5.8.3"
   },
   "private": true
