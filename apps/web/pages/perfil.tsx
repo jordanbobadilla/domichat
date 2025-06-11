@@ -46,43 +46,46 @@ export default function Perfil() {
       margin: "40px auto",
       paddingLeft: 24,
       paddingRight: 24,
-      backgroundColor: colors.fondo,
     },
-    card: {
+    header: {
+      background: `linear-gradient(135deg, ${colors.primario}, ${colors.secundario})`,
+      color: "#fff",
+      borderRadius: "0 0 16px 16px",
+      padding: "40px 32px",
       display: "flex",
-      gap: 32,
       alignItems: "center",
-      backgroundColor: colors.input,
-      border: `1px solid ${colors.borde}`,
+      gap: 24,
+    },
+    content: {
+      backgroundColor: colors.fondo,
       borderRadius: 12,
+      boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
       padding: 32,
-      boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+      marginTop: -20,
     },
     avatar: {
       width: 120,
       height: 120,
       borderRadius: "50%",
-      backgroundColor: colors.primario,
+      backgroundColor: "#fff",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      color: "#fff",
-      fontSize: 40,
+      color: colors.primario,
+      fontSize: 48,
       fontWeight: 700,
       flexShrink: 0,
-    },
-    infoBox: {
-      flex: 1,
+      border: `4px solid ${colors.fondo}`,
     },
     titulo: {
-      fontSize: 26,
-      color: colors.primario,
-      marginBottom: 10,
+      fontSize: 28,
+      marginBottom: 4,
       fontWeight: 700,
+      color: "#fff",
     },
     email: {
-      color: colors.texto,
-      marginBottom: 8,
+      color: "rgba(255,255,255,0.9)",
+      marginBottom: 0,
       fontSize: 14,
     },
     bio: {
@@ -131,16 +134,19 @@ export default function Perfil() {
   return (
     <>
       <div style={styles.wrapper}>
-        <div style={styles.card}>
+        <div style={styles.header}>
           <div style={styles.avatar}>{nombre.charAt(0).toUpperCase()}</div>
-          <div style={styles.infoBox}>
+          <div>
             <h2 style={styles.titulo}>{nombre}</h2>
             {email && <p style={styles.email}>{email}</p>}
-            <p style={styles.bio}>
-              Apasionado por la tecnología y la cultura dominicana.
-            </p>
-            <p style={styles.info}>📍 Santo Domingo, RD</p>
-            <p style={styles.info}>Miembro desde 2025</p>
+          </div>
+        </div>
+        <div style={styles.content}>
+          <p style={styles.bio}>
+            Apasionado por la tecnología y la cultura dominicana.
+          </p>
+          <p style={styles.info}>📍 Santo Domingo, RD</p>
+          <p style={styles.info}>Miembro desde 2025</p>
 
             {estado ? (
               estado.activa ? (
@@ -157,17 +163,16 @@ export default function Perfil() {
               </p>
             )}
 
-            <button
-              style={styles.botonSecundario}
-              onClick={() => router.push("/configuracion")}
-            >
-              Configuración de DomiChat
-            </button>
+          <button
+            style={styles.botonSecundario}
+            onClick={() => router.push("/configuracion")}
+          >
+            Configuración de DomiChat
+          </button>
 
-            <button style={styles.boton} onClick={cerrarSesion}>
-              Cerrar sesión
-            </button>
-          </div>
+          <button style={styles.boton} onClick={cerrarSesion}>
+            Cerrar sesión
+          </button>
         </div>
       </div>
     </>
