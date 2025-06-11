@@ -113,16 +113,25 @@ export default function Historial() {
     wrapper: {
       maxWidth: 800,
       margin: "auto",
-      paddingTop: 24,
       paddingLeft: 16,
       paddingRight: 16,
       backgroundColor: colors.fondo,
     },
+    header: {
+      background: `linear-gradient(135deg, ${colors.primario}, ${colors.secundario})`,
+      color: "#fff",
+      borderRadius: "0 0 16px 16px",
+      padding: "32px 24px",
+      marginLeft: -16,
+      marginRight: -16,
+    },
     titulo: {
-      color: colors.primario,
       fontWeight: 700,
-      marginBottom: 20,
-      paddingLeft: isMobile ? 64 : 0,
+      paddingLeft: isMobile ? 48 : 0,
+      fontSize: 20,
+    },
+    content: {
+      marginTop: 20,
     },
     card: {
       backgroundColor: colors.input,
@@ -165,17 +174,20 @@ export default function Historial() {
   return (
     <>
       <div style={styles.wrapper}>
-        <h2 style={styles.titulo}>Historial de conversaciones</h2>
-        {items.length === 0 ? (
-          <p>No tienes conversaciones guardadas aún.</p>
-        ) : (
-          <>
-            <ul style={{ listStyle: "none", paddingLeft: 0 }}>
-              {items.map((item) => (
-                <li
-                  key={item.id}
-                  style={styles.card}
-                  onClick={() => abrirChat(item)}
+        <div style={styles.header}>
+          <h2 style={styles.titulo}>Historial de conversaciones</h2>
+        </div>
+        <div style={styles.content}>
+          {items.length === 0 ? (
+            <p>No tienes conversaciones guardadas aún.</p>
+          ) : (
+            <>
+              <ul style={{ listStyle: "none", paddingLeft: 0 }}>
+                {items.map((item) => (
+                  <li
+                    key={item.id}
+                    style={styles.card}
+                    onClick={() => abrirChat(item)}
                 >
                   <div style={styles.info}>
                     <p style={styles.tituloChat}>{item.titulo}</p>
@@ -206,24 +218,25 @@ export default function Historial() {
                   </div>
                 </li>
               ))}
-            </ul>
-            <button
-              onClick={eliminarTodo}
-              style={{
-                marginTop: 16,
-                backgroundColor: colors.secundario,
-                color: "#fff",
-                padding: "10px 16px",
-                border: "none",
-                borderRadius: 8,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              Eliminar todo el historial
-            </button>
-          </>
-        )}
+              </ul>
+              <button
+                onClick={eliminarTodo}
+                style={{
+                  marginTop: 16,
+                  backgroundColor: colors.secundario,
+                  color: "#fff",
+                  padding: "10px 16px",
+                  border: "none",
+                  borderRadius: 8,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                Eliminar todo el historial
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </>
   )
