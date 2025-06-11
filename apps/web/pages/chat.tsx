@@ -185,14 +185,13 @@ export default function Chat() {
     titulo: {
       color: colors.primario,
       fontWeight: 700,
-      marginBottom: 20,
     },
     tituloRow: {
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       marginBottom: 20,
-      paddingLeft: isMobile ? 40 : 0,
+      paddingLeft: isMobile ? 64 : 0,
     },
     botonNuevo: {
       backgroundColor: colors.secundario,

@@ -59,8 +59,7 @@ export default function Sidebar({
       flexDirection: "column",
       justifyContent: "space-between",
       boxSizing: "border-box",
-      transform:
-        isMobile && !isOpen ? "translateX(-100%)" : "translateX(0)",
+      transform: isMobile && !isOpen ? "translateX(-100%)" : "translateX(0)",
       transition: "transform 0.3s ease-in-out",
       zIndex: 1000,
     },
@@ -78,7 +77,7 @@ export default function Sidebar({
     },
     logo: {
       display: "block",
-      margin: "0 auto 20px",
+      margin: "64px auto 20px",
       background: colors.fondo,
       borderRadius: 16,
     },
@@ -109,7 +108,7 @@ export default function Sidebar({
         onClick={onClose}
         style={{
           position: "absolute",
-          top: 16,
+          top: 30,
           right: 16,
           cursor: "pointer",
           display: isMobile ? "block" : "none",

@@ -33,7 +33,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         onClick={toggleSidebar}
         style={{
           position: "fixed",
-          top: 16,
+          top: 26,
           left: 16,
           background: "none",
           border: "none",
@@ -41,9 +41,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           fontSize: 28,
           zIndex: 1100,
           display: isMobile ? "block" : "none",
+          cursor: "pointer",
         }}
       >
-        <IoMenuOutline />
+        <IoMenuOutline color={sidebarOpen ? "#fff" : "#000"} />
       </button>
       <div
         style={{
