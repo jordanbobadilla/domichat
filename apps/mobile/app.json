@@ -13,7 +13,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIndetifier": "com.jordanbobadilla.domichat",
+      "bundleIdentifier": "com.jordanbobadilla.domichat",
       "supportsTablet": true
     },
     "android": {
