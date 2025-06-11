@@ -300,7 +300,10 @@ export default function Chat() {
         <div style={styles.tituloRow}>
           <h2 style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</h2>
           <button onClick={nuevoChat} style={styles.botonNuevo}>
-            <IoAddCircleOutline style={{ marginRight: 6 }} /> Nuevo chat
+            <IoAddCircleOutline
+              style={{ marginRight: 6, verticalAlign: "middle" }}
+            />
+            Nuevo chat
           </button>
         </div>
 
@@ -347,7 +350,8 @@ export default function Chat() {
               "..."
             ) : (
               <>
-                <IoSend style={{ marginRight: 4 }} /> Enviar
+                <IoSend style={{ marginRight: 4, verticalAlign: "middle" }} />
+                Enviar
               </>
             )}
           </button>

@@ -106,7 +106,10 @@ export default function Configuracion() {
             </button>
           ))}
           <button onClick={restaurarVoz} style={styles.botonSecundario}>
-            <IoRefreshOutline style={{ marginRight: 4 }} /> Restaurar voz por defecto
+            <IoRefreshOutline
+              style={{ marginRight: 4, verticalAlign: "middle" }}
+            />
+            Restaurar voz por defecto
           </button>
         </div>
 
@@ -114,9 +117,13 @@ export default function Configuracion() {
           <h3 style={styles.subtitulo}>Tema</h3>
           <button onClick={cambiarTema} style={styles.botonSecundario}>
             {tema === "oscuro" ? (
-              <IoSunnyOutline style={{ marginRight: 4 }} />
+              <IoSunnyOutline
+                style={{ marginRight: 4, verticalAlign: "middle" }}
+              />
             ) : (
-              <IoMoonOutline style={{ marginRight: 4 }} />
+              <IoMoonOutline
+                style={{ marginRight: 4, verticalAlign: "middle" }}
+              />
             )}
             Usar tema {tema === "oscuro" ? "claro" : "oscuro"}
           </button>

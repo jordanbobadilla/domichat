@@ -79,22 +79,33 @@ export default function Sidebar() {
     <aside style={styles.sidebar}>
       <nav style={styles.nav}>
         <Link href="/chat" style={styles.link}>
-          <IoChatbubbleEllipsesOutline style={{ marginRight: 6 }} /> Nuevo chat
+          <IoChatbubbleEllipsesOutline
+            style={{ marginRight: 6, verticalAlign: "middle" }}
+          />
+          Nuevo chat
         </Link>
         <Link href="/historial" style={styles.link}>
-          <IoTimeOutline style={{ marginRight: 6 }} /> Historial
+          <IoTimeOutline style={{ marginRight: 6, verticalAlign: "middle" }} />
+          Historial
         </Link>
         <Link href="/perfil" style={styles.link}>
-          <IoPersonCircleOutline style={{ marginRight: 6 }} /> Perfil
+          <IoPersonCircleOutline
+            style={{ marginRight: 6, verticalAlign: "middle" }}
+          />
+          Perfil
         </Link>
         <Link href="/configuracion" style={styles.link}>
-          <IoSettingsOutline style={{ marginRight: 6 }} /> Configuración
+          <IoSettingsOutline
+            style={{ marginRight: 6, verticalAlign: "middle" }}
+          />
+          Configuración
         </Link>
       </nav>
       <div style={styles.bottom}>
         <span style={styles.nombre}>{nombre}</span>
         <button onClick={cerrarSesion} style={styles.boton}>
-          <IoLogOutOutline style={{ marginRight: 6 }} /> Cerrar sesión
+          <IoLogOutOutline style={{ marginRight: 6, verticalAlign: "middle" }} />
+          Cerrar sesión
         </button>
       </div>
     </aside>
