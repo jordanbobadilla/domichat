@@ -10,9 +10,16 @@ import {
   IoPersonCircleOutline,
   IoSettingsOutline,
   IoLogOutOutline,
+  IoCloseOutline,
 } from "react-icons/io5"
 
-export default function Sidebar() {
+export default function Sidebar({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean
+  onClose: () => void
+}) {
   const router = useRouter()
   const [nombre, setNombre] = useState("")
   const { tema } = useContext(ThemeContext)
@@ -29,6 +36,15 @@ export default function Sidebar() {
     router.push("/login")
   }
 
+  const [isMobile, setIsMobile] = useState(true)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
   const styles: { [key: string]: React.CSSProperties } = {
     sidebar: {
       position: "fixed",
@@ -43,6 +59,10 @@ export default function Sidebar() {
       flexDirection: "column",
       justifyContent: "space-between",
       boxSizing: "border-box",
+      transform:
+        isMobile && !isOpen ? "translateX(-100%)" : "translateX(0)",
+      transition: "transform 0.3s ease-in-out",
+      zIndex: 1000,
     },
     nav: {
       display: "flex",
@@ -85,6 +105,16 @@ export default function Sidebar() {
 
   return (
     <aside style={styles.sidebar}>
+      <IoCloseOutline
+        onClick={onClose}
+        style={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          cursor: "pointer",
+          display: isMobile ? "block" : "none",
+        }}
+      />
       <Image
         src="/domichat-logo.svg"
         width={120}

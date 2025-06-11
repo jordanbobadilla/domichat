@@ -43,9 +43,17 @@ export default function Chat() {
   const [mensaje, setMensaje] = useState("")
   const [historial, setHistorial] = useState<Mensaje[]>(historialInicial)
   const [cargando, setCargando] = useState(false)
+  const [isMobile, setIsMobile] = useState(true)
   const chatRef = useRef<HTMLDivElement>(null)
   const { tema } = useContext(ThemeContext)
   const colors = temas[tema]
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   useEffect(() => {
     const sesion = verificarSesion()
@@ -244,7 +252,7 @@ export default function Chat() {
       borderTop: `1px solid ${colors.borde}`,
       position: "fixed",
       bottom: 0,
-      left: 220,
+      left: isMobile ? 0 : 220,
       right: 0,
       backgroundColor: colors.fondo,
       maxWidth: 800,
