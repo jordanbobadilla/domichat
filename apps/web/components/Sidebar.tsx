@@ -59,6 +59,8 @@ export default function Sidebar() {
     logo: {
       display: "block",
       margin: "0 auto 20px",
+      background: colors.fondo,
+      borderRadius: 16,
     },
     bottom: {
       display: "flex",
@@ -68,6 +70,7 @@ export default function Sidebar() {
     nombre: {
       color: "#fff",
       fontSize: 14,
+      alignSelf: "center",
     },
     boton: {
       backgroundColor: colors.secundario,
@@ -116,7 +119,9 @@ export default function Sidebar() {
       <div style={styles.bottom}>
         <span style={styles.nombre}>{nombre}</span>
         <button onClick={cerrarSesion} style={styles.boton}>
-          <IoLogOutOutline style={{ marginRight: 6, verticalAlign: "middle" }} />
+          <IoLogOutOutline
+            style={{ marginRight: 6, verticalAlign: "middle" }}
+          />
           Cerrar sesión
         </button>
       </div>
