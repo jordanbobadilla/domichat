@@ -192,6 +192,7 @@ export default function Chat() {
       alignItems: "center",
       justifyContent: "space-between",
       marginBottom: 20,
+      paddingLeft: isMobile ? 40 : 0,
     },
     botonNuevo: {
       backgroundColor: colors.secundario,
