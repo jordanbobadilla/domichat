@@ -4,6 +4,10 @@ import axios from "axios"
 import { temas } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
 import { ThemeContext } from "../context/ThemeContext"
+import {
+  IoPencilOutline,
+  IoTrashOutline,
+} from "react-icons/io5"
 
 interface Mensaje {
   mensaje: string
@@ -117,18 +121,38 @@ export default function Historial() {
     card: {
       backgroundColor: colors.input,
       border: `1px solid ${colors.borde}`,
-      borderRadius: 10,
-      padding: 14,
+      borderRadius: 12,
+      padding: 16,
       marginBottom: 12,
+      boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      cursor: "pointer",
+    },
+    info: {
+      flex: 1,
     },
     tituloChat: {
       fontWeight: 600,
       marginBottom: 4,
+      fontSize: 16,
       color: colors.texto,
     },
     fecha: {
-      color: colors.texto,
+      color: colors.gris,
       fontSize: 14,
+    },
+    acciones: {
+      display: "flex",
+      gap: 8,
+    },
+    icono: {
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      color: colors.primario,
+      fontSize: 20,
     },
   }
 
@@ -142,44 +166,36 @@ export default function Historial() {
           <>
             <ul style={{ listStyle: "none", paddingLeft: 0 }}>
               {items.map((item) => (
-                <li key={item.id} style={styles.card}>
-                  <button
-                    onClick={() => abrirChat(item)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      textAlign: "left",
-                      width: "100%",
-                      padding: 0,
-                      cursor: "pointer",
-                    }}
-                  >
+                <li
+                  key={item.id}
+                  style={styles.card}
+                  onClick={() => abrirChat(item)}
+                >
+                  <div style={styles.info}>
                     <p style={styles.tituloChat}>{item.titulo}</p>
                     <p style={styles.fecha}>
-                      {new Date(item.fecha).toLocaleDateString()}{" "}
+                      {new Date(item.fecha).toLocaleDateString()} {" "}
                       {new Date(item.fecha).toLocaleTimeString()}
                     </p>
-                  </button>
-                  <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                  </div>
+                  <div style={styles.acciones}>
                     <button
-                      onClick={() => renombrar(item)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        renombrar(item)
                       }}
+                      style={styles.icono}
                     >
-                      ✏️
+                      <IoPencilOutline />
                     </button>
                     <button
-                      onClick={() => eliminar(item.id)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        eliminar(item.id)
                       }}
+                      style={styles.icono}
                     >
-                      🗑️
+                      <IoTrashOutline />
                     </button>
                   </div>
                 </li>
