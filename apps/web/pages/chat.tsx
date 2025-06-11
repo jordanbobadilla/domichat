@@ -76,7 +76,17 @@ export default function Chat() {
       ev.onmessage = (e) => {
         const data = JSON.parse(e.data)
         if (data.tipo === "mensaje") {
-          setHistorial((h) => [...h, data.mensaje])
+          setHistorial((h) => {
+            const idx = h.findIndex(
+              (m) => m.mensaje === data.mensaje.mensaje && m.respuesta === ""
+            )
+            if (idx !== -1) {
+              const copia = [...h]
+              copia[idx] = data.mensaje
+              return copia
+            }
+            return [...h, data.mensaje]
+          })
         } else if (data.tipo === "reset") {
           setHistorial([])
         }
@@ -125,11 +135,24 @@ export default function Chat() {
   const enviarMensaje = async () => {
     if (!mensaje.trim()) return
 
+    const mensajeActual = mensaje
+    setHistorial((h) => [
+      ...h,
+      { mensaje: mensajeActual, respuesta: "", creadoEn: new Date().toISOString() },
+    ])
+    setMensaje("")
+    setTimeout(() => {
+      chatRef.current?.scrollTo({
+        top: chatRef.current.scrollHeight,
+        behavior: "smooth",
+      })
+    }, 100)
+
     setCargando(true)
     try {
       const res = await axios.post(
         "http://localhost:4000/api/chat",
-        { mensaje },
+        { mensaje: mensajeActual },
         { headers: { Authorization: `Bearer ${token}` } }
       )
 
@@ -325,7 +348,7 @@ export default function Chat() {
         ) : (
           <div ref={chatRef} style={styles.chatBox}>
             {historial.map((h, i) => (
-              <div key={i} style={{ display: "flex", flexDirection: "column" }}>
+              <div key={i} className="fade-in" style={{ display: "flex", flexDirection: "column" }}>
                 <div
                   style={{
                     ...styles.mensajeUsuario,
@@ -336,9 +359,16 @@ export default function Chat() {
                   <p style={{ color: "#fff", margin: 0 }}>{h.mensaje}</p>
                 </div>
                 <div style={styles.mensajeBot}>
-                  <div style={{ color: "#000" }}>
-                    <ReactMarkdown>{h.respuesta}</ReactMarkdown>
-                  </div>
+                  {h.respuesta ? (
+                    <div style={{ color: "#000" }}>
+                      <ReactMarkdown>{h.respuesta}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, color: colors.gris }}>
+                      <div className="spinner" />
+                      <span>Analizando...</span>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -355,7 +385,7 @@ export default function Chat() {
           />
           <button onClick={enviarMensaje} style={styles.boton}>
             {cargando ? (
-              "..."
+              <div className="spinner" />
             ) : (
               <>
                 <IoSend style={{ marginRight: 4, verticalAlign: "middle" }} />
