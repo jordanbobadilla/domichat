@@ -3,7 +3,6 @@ import { useRouter } from "next/router"
 import axios from "axios"
 import { temas } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
-import Header from "../components/Header"
 import { ThemeContext } from "../context/ThemeContext"
 import ReactMarkdown from "react-markdown"
 import { guardarHistorial } from "../services/chat"
@@ -165,7 +164,7 @@ export default function Chat() {
     wrapper: {
       maxWidth: 800,
       margin: "auto",
-      paddingTop: 70,
+      paddingTop: 24,
       paddingLeft: 16,
       paddingRight: 16,
       display: "flex",
@@ -244,7 +243,7 @@ export default function Chat() {
       borderTop: `1px solid ${colors.borde}`,
       position: "fixed",
       bottom: 0,
-      left: 0,
+      left: 220,
       right: 0,
       backgroundColor: colors.fondo,
       maxWidth: 800,
