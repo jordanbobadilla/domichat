@@ -1,6 +1,11 @@
 import { useEffect, useState, useContext } from "react"
 import { temas } from "../constants/colors"
 import { ThemeContext } from "../context/ThemeContext"
+import {
+  IoRefreshOutline,
+  IoSunnyOutline,
+  IoMoonOutline,
+} from "react-icons/io5"
 
 const VOCES = [
   { id: "popi", nombre: "Voz Popi (Distrito Nacional)" },
@@ -101,13 +106,18 @@ export default function Configuracion() {
             </button>
           ))}
           <button onClick={restaurarVoz} style={styles.botonSecundario}>
-            Restaurar voz por defecto
+            <IoRefreshOutline style={{ marginRight: 4 }} /> Restaurar voz por defecto
           </button>
         </div>
 
         <div style={styles.seccion}>
           <h3 style={styles.subtitulo}>Tema</h3>
           <button onClick={cambiarTema} style={styles.botonSecundario}>
+            {tema === "oscuro" ? (
+              <IoSunnyOutline style={{ marginRight: 4 }} />
+            ) : (
+              <IoMoonOutline style={{ marginRight: 4 }} />
+            )}
             Usar tema {tema === "oscuro" ? "claro" : "oscuro"}
           </button>
         </div>

@@ -15,6 +15,7 @@ import { ROUTES } from "../constants/routes"
 import { useGoogleLogin, loginWithApple } from "../services/authSocial"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
+import { Ionicons } from "@expo/vector-icons"
 
 export default function LoginScreen({ navigation }: any) {
   const { tema } = useContext(ThemeContext)
@@ -96,7 +97,9 @@ export default function LoginScreen({ navigation }: any) {
           onPress={iniciarSesion}
           disabled={cargando}
         >
-          <Text style={styles.botonTexto}>Entrar</Text>
+          <Text style={styles.botonTexto}>
+            Entrar <Ionicons name="log-in-outline" size={20} color="#fff" />
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity

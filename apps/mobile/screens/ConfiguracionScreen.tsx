@@ -10,6 +10,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { temas } from "../constants/colors"
 import { ThemeContext } from "../context/ThemeContext"
+import { Ionicons } from "@expo/vector-icons"
 
 const VOCES = [
   { id: "popi", nombre: "Voz Popi (Distrito Nacional)" },
@@ -86,7 +87,9 @@ export default function ConfiguracionScreen() {
         style={[styles.botonReset, { backgroundColor: colors.gris }]}
         onPress={restaurarValores}
       >
-        <Text style={styles.textoReset}>Restaurar valores por defecto</Text>
+        <Text style={styles.textoReset}>
+          <Ionicons name="refresh-outline" size={20} color="#fff" /> Restaurar valores por defecto
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -99,6 +102,19 @@ export default function ConfiguracionScreen() {
         <Text
           style={[styles.textoTema, { color: temaOscuro ? "#000" : "#fff" }]}
         >
+          {temaOscuro ? (
+            <Ionicons
+              name="sunny-outline"
+              size={20}
+              color={temaOscuro ? "#000" : "#fff"}
+            />
+          ) : (
+            <Ionicons
+              name="moon-outline"
+              size={20}
+              color={temaOscuro ? "#000" : "#fff"}
+            />
+          )}{" "}
           Usar tema {temaOscuro ? "claro" : "oscuro"}
         </Text>
       </TouchableOpacity>

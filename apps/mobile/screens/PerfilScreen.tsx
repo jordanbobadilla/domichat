@@ -14,6 +14,7 @@ import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
 import { useNavigation } from "@react-navigation/native"
 import Header from "../components/Header"
+import { Ionicons } from "@expo/vector-icons"
 
 export default function PerfilScreen({ route, navigation }: any) {
   const [nombre, setNombre] = useState("")
@@ -117,14 +118,18 @@ export default function PerfilScreen({ route, navigation }: any) {
             ]}
             onPress={() => navigation.navigate("Configuracion")}
           >
-            <Text style={styles.botonTexto}>Configuración de DomiChat</Text>
+            <Text style={styles.botonTexto}>
+              <Ionicons name="settings-outline" size={20} color="#fff" /> Configuración de DomiChat
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.botonCerrar, { backgroundColor: colors.peligro }]}
             onPress={cerrarSesion}
           >
-            <Text style={styles.botonTexto}>Cerrar sesión</Text>
+            <Text style={styles.botonTexto}>
+              <Ionicons name="log-out-outline" size={20} color="#fff" /> Cerrar sesión
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

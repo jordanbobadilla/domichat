@@ -212,7 +212,9 @@ export default function HistorialScreen({ navigation }: any) {
             style={[styles.botonReset, { backgroundColor: colors.secundario }]}
             onPress={eliminarTodoElHistorial}
           >
-            <Text style={styles.textoBoton}>Eliminar todo el historial</Text>
+            <Text style={styles.textoBoton}>
+              <Ionicons name="trash-outline" size={20} color="#fff" /> Eliminar todo el historial
+            </Text>
           </TouchableOpacity>
         }
       />

@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 import Image from "next/image"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
+import { IoArrowForwardOutline } from "react-icons/io5"
 
 export default function Home() {
   const router = useRouter()
@@ -74,7 +75,7 @@ export default function Home() {
         Tu asistente dominicano 🇩🇴 donde y cuando lo necesites
       </p>
       <button onClick={continuar} style={styles.boton}>
-        Empezar
+        Empezar <IoArrowForwardOutline style={{ marginLeft: 6 }} />
       </button>
     </div>
   )

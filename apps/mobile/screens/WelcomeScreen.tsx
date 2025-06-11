@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native"
 import { ROUTES } from "../constants/routes"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
+import { Ionicons } from "@expo/vector-icons"
 
 export default function WelcomeScreen({ navigation }: any) {
   const [loading, setLoading] = useState(true)
@@ -61,7 +62,9 @@ export default function WelcomeScreen({ navigation }: any) {
         onPress={continuar}
         style={[styles.boton, { backgroundColor: colors.primario }]}
       >
-        <Text style={styles.botonTexto}>Empezar</Text>
+        <Text style={styles.botonTexto}>
+          Empezar <Ionicons name="arrow-forward" size={20} color="#fff" />
+        </Text>
       </TouchableOpacity>
     </View>
   )

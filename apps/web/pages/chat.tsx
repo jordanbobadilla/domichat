@@ -6,6 +6,7 @@ import { verificarSesion } from "../services/auth"
 import { ThemeContext } from "../context/ThemeContext"
 import ReactMarkdown from "react-markdown"
 import { guardarHistorial } from "../services/chat"
+import { IoAddCircleOutline, IoSend } from "react-icons/io5"
 
 interface Mensaje {
   mensaje: string
@@ -299,7 +300,7 @@ export default function Chat() {
         <div style={styles.tituloRow}>
           <h2 style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</h2>
           <button onClick={nuevoChat} style={styles.botonNuevo}>
-            Nuevo chat
+            <IoAddCircleOutline style={{ marginRight: 6 }} /> Nuevo chat
           </button>
         </div>
 
@@ -342,7 +343,13 @@ export default function Chat() {
             style={styles.input}
           />
           <button onClick={enviarMensaje} style={styles.boton}>
-            {cargando ? "..." : "Enviar"}
+            {cargando ? (
+              "..."
+            ) : (
+              <>
+                <IoSend style={{ marginRight: 4 }} /> Enviar
+              </>
+            )}
           </button>
         </div>
       </div>
