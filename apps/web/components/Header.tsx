@@ -26,8 +26,6 @@ export default function Header() {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      maxWidth: 800,
-      margin: "auto",
       width: "100%",
       boxSizing: "border-box",
     },

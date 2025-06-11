@@ -26,9 +26,7 @@ export default function Chat() {
     historial?: string
   }
 
-  const historialInicial:
-    | Mensaje[]
-    | (() => Mensaje[]) = historialQuery
+  const historialInicial: Mensaje[] | (() => Mensaje[]) = historialQuery
     ? JSON.parse(decodeURIComponent(historialQuery as string))
     : mensajePrevio && respuestaPrevio
     ? [
@@ -298,11 +296,12 @@ export default function Chat() {
 
   return (
     <>
-      <Header />
       <div style={styles.wrapper}>
         <div style={styles.tituloRow}>
           <h2 style={styles.titulo}>Hola, {nombre.split(" ")[0]} 👋</h2>
-          <button onClick={nuevoChat} style={styles.botonNuevo}>Nuevo chat</button>
+          <button onClick={nuevoChat} style={styles.botonNuevo}>
+            Nuevo chat
+          </button>
         </div>
 
         {historial.length === 0 ? (
@@ -315,7 +314,7 @@ export default function Chat() {
         ) : (
           <div ref={chatRef} style={styles.chatBox}>
             {historial.map((h, i) => (
-              <div key={i}>
+              <div key={i} style={{ display: "flex", flexDirection: "column" }}>
                 <div
                   style={{
                     ...styles.mensajeUsuario,

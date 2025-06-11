@@ -135,7 +135,6 @@ export default function Historial() {
 
   return (
     <>
-      <Header />
       <div style={styles.wrapper}>
         <h2 style={styles.titulo}>Historial de conversaciones</h2>
         {items.length === 0 ? (
@@ -158,20 +157,28 @@ export default function Historial() {
                   >
                     <p style={styles.tituloChat}>{item.titulo}</p>
                     <p style={styles.fecha}>
-                      {new Date(item.fecha).toLocaleDateString()} {" "}
+                      {new Date(item.fecha).toLocaleDateString()}{" "}
                       {new Date(item.fecha).toLocaleTimeString()}
                     </p>
                   </button>
                   <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                     <button
                       onClick={() => renombrar(item)}
-                      style={{ background: "none", border: "none", cursor: "pointer" }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
                     >
                       ✏️
                     </button>
                     <button
                       onClick={() => eliminar(item.id)}
-                      style={{ background: "none", border: "none", cursor: "pointer" }}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
                     >
                       🗑️
                     </button>

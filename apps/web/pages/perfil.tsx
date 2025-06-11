@@ -127,7 +127,6 @@ export default function Perfil() {
 
   return (
     <>
-      <Header />
       <div style={styles.wrapper}>
         <div style={styles.card}>
           <div style={styles.avatar}>{nombre.charAt(0).toUpperCase()}</div>
@@ -160,7 +159,6 @@ export default function Perfil() {
           >
             Configuración de DomiChat
           </button>
-
 
           <button style={styles.boton} onClick={cerrarSesion}>
             Cerrar sesión

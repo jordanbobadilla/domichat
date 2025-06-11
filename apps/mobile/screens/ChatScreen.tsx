@@ -19,6 +19,7 @@ import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
 import Header from "../components/Header"
 import Markdown from "react-native-markdown-display"
+import EventSource from "react-native-event-source"
 
 export interface Mensaje {
   mensaje: string
@@ -67,17 +68,27 @@ export default function ChatScreen({ route }: any) {
         .then((res) => setHistorial(res.data))
         .catch(() => {})
 
-      // @ts-ignore EventSource puede no existir en algunos entornos
       const ev = new EventSource(`${BASE_URL}/chat/stream?token=${token}`)
-        ev.onmessage = (e: MessageEvent) => {
-          const data = JSON.parse(e.data)
-          if (data.tipo === "mensaje") {
-            setHistorial((h: Mensaje[]) => [...h, data.mensaje as Mensaje])
-          } else if (data.tipo === "reset") {
-            setHistorial([])
-          }
+      ev.addEventListener("mensaje", (e) => {
+        const data = JSON.parse(e.data || "")
+        if (data.tipo === "mensaje") {
+          setHistorial((h: Mensaje[]) => [...h, data.mensaje as Mensaje])
+        } else if (data.tipo === "reset") {
+          setHistorial([])
+        }
+      })
+      // ev.onmessage = (e: MessageEvent) => {
+      //   const data = JSON.parse(e.data)
+      //   if (data.tipo === "mensaje") {
+      //     setHistorial((h: Mensaje[]) => [...h, data.mensaje as Mensaje])
+      //   } else if (data.tipo === "reset") {
+      //     setHistorial([])
+      //   }
+      // }
+      return () => {
+        ev.removeAllListeners()
+        ev.close()
       }
-      return () => ev.close()
     }
 
     AsyncStorage.getItem("voz_dominicana").then((voz) => {
@@ -145,7 +156,11 @@ export default function ChatScreen({ route }: any) {
       // El mensaje nuevo llegará vía SSE
       const nuevoHistorial = [
         ...historial,
-        { mensaje, respuesta: nuevaRespuesta, creadoEn: new Date().toISOString() },
+        {
+          mensaje,
+          respuesta: nuevaRespuesta,
+          creadoEn: new Date().toISOString(),
+        },
       ]
       setMensaje("")
       reproducirVoz(nuevaRespuesta)
