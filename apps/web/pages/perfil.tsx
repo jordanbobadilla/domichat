@@ -42,38 +42,42 @@ export default function Perfil() {
 
   const styles: { [key: string]: React.CSSProperties } = {
     wrapper: {
-      maxWidth: 400,
-      margin: "auto",
-      paddingTop: 24,
-      paddingLeft: 16,
-      paddingRight: 16,
-      textAlign: "center",
+      maxWidth: 900,
+      margin: "40px auto",
+      paddingLeft: 24,
+      paddingRight: 24,
       backgroundColor: colors.fondo,
     },
     card: {
+      display: "flex",
+      gap: 32,
+      alignItems: "center",
       backgroundColor: colors.input,
       border: `1px solid ${colors.borde}`,
       borderRadius: 12,
-      padding: 24,
+      padding: 32,
       boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
     },
     avatar: {
-      width: 80,
-      height: 80,
+      width: 120,
+      height: 120,
       borderRadius: "50%",
       backgroundColor: colors.primario,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       color: "#fff",
-      fontSize: 32,
+      fontSize: 40,
       fontWeight: 700,
-      margin: "0 auto 20px",
+      flexShrink: 0,
+    },
+    infoBox: {
+      flex: 1,
     },
     titulo: {
-      fontSize: 22,
+      fontSize: 26,
       color: colors.primario,
-      marginBottom: 20,
+      marginBottom: 10,
       fontWeight: 700,
     },
     email: {
@@ -129,39 +133,41 @@ export default function Perfil() {
       <div style={styles.wrapper}>
         <div style={styles.card}>
           <div style={styles.avatar}>{nombre.charAt(0).toUpperCase()}</div>
-          <h2 style={styles.titulo}>{nombre}</h2>
-          {email && <p style={styles.email}>{email}</p>}
-          <p style={styles.bio}>
-            Apasionado por la tecnología y la cultura dominicana.
-          </p>
-          <p style={styles.info}>📍 Santo Domingo, RD</p>
-          <p style={styles.info}>Miembro desde 2025</p>
-
-          {estado ? (
-            estado.activa ? (
-              <p style={styles.activa}>
-                Suscripción activa hasta el{" "}
-                {new Date(estado.expiracion!).toLocaleDateString()}
-              </p>
-            ) : (
-              <p style={styles.inactiva}>No tienes una suscripción activa</p>
-            )
-          ) : (
-            <p style={{ color: colors.texto }}>
-              Cargando estado de suscripción...
+          <div style={styles.infoBox}>
+            <h2 style={styles.titulo}>{nombre}</h2>
+            {email && <p style={styles.email}>{email}</p>}
+            <p style={styles.bio}>
+              Apasionado por la tecnología y la cultura dominicana.
             </p>
-          )}
+            <p style={styles.info}>📍 Santo Domingo, RD</p>
+            <p style={styles.info}>Miembro desde 2025</p>
 
-          <button
-            style={styles.botonSecundario}
-            onClick={() => router.push("/configuracion")}
-          >
-            Configuración de DomiChat
-          </button>
+            {estado ? (
+              estado.activa ? (
+                <p style={styles.activa}>
+                  Suscripción activa hasta el{" "}
+                  {new Date(estado.expiracion!).toLocaleDateString()}
+                </p>
+              ) : (
+                <p style={styles.inactiva}>No tienes una suscripción activa</p>
+              )
+            ) : (
+              <p style={{ color: colors.texto }}>
+                Cargando estado de suscripción...
+              </p>
+            )}
 
-          <button style={styles.boton} onClick={cerrarSesion}>
-            Cerrar sesión
-          </button>
+            <button
+              style={styles.botonSecundario}
+              onClick={() => router.push("/configuracion")}
+            >
+              Configuración de DomiChat
+            </button>
+
+            <button style={styles.boton} onClick={cerrarSesion}>
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </div>
     </>
