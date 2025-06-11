@@ -123,7 +123,10 @@ export default function Login() {
             "Entrando..."
           ) : (
             <>
-              <IoLogInOutline style={{ marginRight: 4 }} /> Entrar
+              <IoLogInOutline
+                style={{ marginRight: 4, verticalAlign: "middle" }}
+              />
+              Entrar
             </>
           )}
         </button>

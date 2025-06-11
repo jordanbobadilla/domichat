@@ -132,7 +132,10 @@ export default function Registro() {
             "Registrando..."
           ) : (
             <>
-              <IoPersonAddOutline style={{ marginRight: 4 }} /> Registrarse
+              <IoPersonAddOutline
+                style={{ marginRight: 4, verticalAlign: "middle" }}
+              />
+              Registrarse
             </>
           )}
         </button>

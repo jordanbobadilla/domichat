@@ -81,19 +81,23 @@ export default function Header() {
     <header style={styles.header}>
       <div style={styles.left}>
         <Link href="/chat" style={styles.link}>
-          <IoChatbubbleEllipsesOutline style={{ marginRight: 4 }} />
+          <IoChatbubbleEllipsesOutline
+            style={{ marginRight: 4, verticalAlign: "middle" }}
+          />
           Chat
         </Link>
         <Link href="/historial" style={styles.link}>
-          <IoTimeOutline style={{ marginRight: 4 }} />
+          <IoTimeOutline style={{ marginRight: 4, verticalAlign: "middle" }} />
           Historial
         </Link>
         <Link href="/perfil" style={styles.link}>
-          <IoPersonCircleOutline style={{ marginRight: 4 }} />
+          <IoPersonCircleOutline
+            style={{ marginRight: 4, verticalAlign: "middle" }}
+          />
           Perfil
         </Link>
         <Link href="/configuracion" style={styles.link}>
-          <IoSettingsOutline style={{ marginRight: 4 }} />
+          <IoSettingsOutline style={{ marginRight: 4, verticalAlign: "middle" }} />
           Configuración
         </Link>
       </div>
@@ -101,7 +105,10 @@ export default function Header() {
       <div style={styles.right}>
         <span style={styles.nombre}>{nombre}</span>
         <button onClick={cerrarSesion} style={styles.boton}>
-          <IoLogOutOutline style={{ marginRight: 6 }} /> Cerrar sesión
+          <IoLogOutOutline
+            style={{ marginRight: 6, verticalAlign: "middle" }}
+          />
+          Cerrar sesión
         </button>
       </div>
     </header>
