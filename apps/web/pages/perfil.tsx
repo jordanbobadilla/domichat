@@ -43,7 +43,7 @@ export default function Perfil() {
   const styles: { [key: string]: React.CSSProperties } = {
     wrapper: {
       maxWidth: 900,
-      margin: "40px auto",
+      margin: "auto",
       paddingLeft: 24,
       paddingRight: 24,
     },
@@ -62,6 +62,9 @@ export default function Perfil() {
       boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
       padding: 32,
       marginTop: -20,
+      display: "flex",
+      flexDirection: "column",
+      gap: 12,
     },
     avatar: {
       width: 120,
@@ -92,6 +95,7 @@ export default function Perfil() {
       color: colors.texto,
       marginBottom: 12,
       fontSize: 14,
+      fontStyle: "oblique",
     },
     info: {
       color: colors.texto,
@@ -133,20 +137,37 @@ export default function Perfil() {
 
   return (
     <>
-      <div style={styles.wrapper}>
-        <div style={styles.header}>
-          <div style={styles.avatar}>{nombre.charAt(0).toUpperCase()}</div>
-          <div>
-            <h2 style={styles.titulo}>{nombre}</h2>
-            {email && <p style={styles.email}>{email}</p>}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "full",
+          height: "100vh",
+        }}
+      >
+        <div style={styles.wrapper}>
+          <div style={styles.header}>
+            <div style={styles.avatar}>{nombre.charAt(0).toUpperCase()}</div>
+            <div>
+              <h2 style={styles.titulo}>{nombre}</h2>
+              {email && <p style={styles.email}>{email}</p>}
+            </div>
           </div>
-        </div>
-        <div style={styles.content}>
-          <p style={styles.bio}>
-            Apasionado por la tecnología y la cultura dominicana.
-          </p>
-          <p style={styles.info}>📍 Santo Domingo, RD</p>
-          <p style={styles.info}>Miembro desde 2025</p>
+          <div style={styles.content}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <h2 style={styles.info}>Santo Domingo, RD</h2>
+              <h2 style={styles.info}>Miembro desde 2025</h2>
+            </div>
+            <p style={styles.bio}>
+              Apasionado por la tecnología y la cultura dominicana.
+            </p>
 
             {estado ? (
               estado.activa ? (
@@ -163,16 +184,17 @@ export default function Perfil() {
               </p>
             )}
 
-          <button
-            style={styles.botonSecundario}
-            onClick={() => router.push("/configuracion")}
-          >
-            Configuración de DomiChat
-          </button>
+            <button
+              style={styles.botonSecundario}
+              onClick={() => router.push("/configuracion")}
+            >
+              Configuración de DomiChat
+            </button>
 
-          <button style={styles.boton} onClick={cerrarSesion}>
-            Cerrar sesión
-          </button>
+            <button style={styles.boton} onClick={cerrarSesion}>
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </div>
     </>
