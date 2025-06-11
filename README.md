@@ -38,6 +38,9 @@ npm install
 cd ../apps/web
 npm install
 
+# Verificar lint en la app web
+npm run lint
+
 # Instalar app móvil
 cd ../mobile
 npm install
