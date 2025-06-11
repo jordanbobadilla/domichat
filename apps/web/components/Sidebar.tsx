@@ -3,6 +3,13 @@ import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
+import {
+  IoChatbubbleEllipsesOutline,
+  IoTimeOutline,
+  IoPersonCircleOutline,
+  IoSettingsOutline,
+  IoLogOutOutline,
+} from "react-icons/io5"
 
 export default function Sidebar() {
   const router = useRouter()
@@ -72,22 +79,22 @@ export default function Sidebar() {
     <aside style={styles.sidebar}>
       <nav style={styles.nav}>
         <Link href="/chat" style={styles.link}>
-          Nuevo chat
+          <IoChatbubbleEllipsesOutline style={{ marginRight: 6 }} /> Nuevo chat
         </Link>
         <Link href="/historial" style={styles.link}>
-          Historial
+          <IoTimeOutline style={{ marginRight: 6 }} /> Historial
         </Link>
         <Link href="/perfil" style={styles.link}>
-          Perfil
+          <IoPersonCircleOutline style={{ marginRight: 6 }} /> Perfil
         </Link>
         <Link href="/configuracion" style={styles.link}>
-          Configuración
+          <IoSettingsOutline style={{ marginRight: 6 }} /> Configuración
         </Link>
       </nav>
       <div style={styles.bottom}>
         <span style={styles.nombre}>{nombre}</span>
         <button onClick={cerrarSesion} style={styles.boton}>
-          Cerrar sesión
+          <IoLogOutOutline style={{ marginRight: 6 }} /> Cerrar sesión
         </button>
       </div>
     </aside>

@@ -3,6 +3,13 @@ import { useEffect, useState, useContext } from "react"
 import { useRouter } from "next/router"
 import { temas } from "../constants/colors"
 import { ThemeContext } from "../context/ThemeContext"
+import {
+  IoChatbubbleEllipsesOutline,
+  IoTimeOutline,
+  IoPersonCircleOutline,
+  IoSettingsOutline,
+  IoLogOutOutline,
+} from "react-icons/io5"
 
 export default function Header() {
   const router = useRouter()
@@ -74,15 +81,19 @@ export default function Header() {
     <header style={styles.header}>
       <div style={styles.left}>
         <Link href="/chat" style={styles.link}>
+          <IoChatbubbleEllipsesOutline style={{ marginRight: 4 }} />
           Chat
         </Link>
         <Link href="/historial" style={styles.link}>
+          <IoTimeOutline style={{ marginRight: 4 }} />
           Historial
         </Link>
         <Link href="/perfil" style={styles.link}>
+          <IoPersonCircleOutline style={{ marginRight: 4 }} />
           Perfil
         </Link>
         <Link href="/configuracion" style={styles.link}>
+          <IoSettingsOutline style={{ marginRight: 4 }} />
           Configuración
         </Link>
       </div>
@@ -90,7 +101,7 @@ export default function Header() {
       <div style={styles.right}>
         <span style={styles.nombre}>{nombre}</span>
         <button onClick={cerrarSesion} style={styles.boton}>
-          Cerrar sesión
+          <IoLogOutOutline style={{ marginRight: 6 }} /> Cerrar sesión
         </button>
       </div>
     </header>

@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 import { useState, useContext } from "react"
 import { temas } from "../constants/colors"
 import { ThemeContext } from "../context/ThemeContext"
+import { IoPersonAddOutline } from "react-icons/io5"
 
 interface FormValues {
   nombre: string
@@ -127,7 +128,13 @@ export default function Registro() {
         />
 
         <button type="submit" style={styles.boton}>
-          {cargando ? "Registrando..." : "Registrarse"}
+          {cargando ? (
+            "Registrando..."
+          ) : (
+            <>
+              <IoPersonAddOutline style={{ marginRight: 4 }} /> Registrarse
+            </>
+          )}
         </button>
       </form>
 

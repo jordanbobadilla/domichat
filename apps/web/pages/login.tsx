@@ -4,6 +4,7 @@ import { useRouter } from "next/router"
 import { useState, useContext } from "react"
 import { temas } from "../constants/colors"
 import { ThemeContext } from "../context/ThemeContext"
+import { IoLogInOutline } from "react-icons/io5"
 
 interface FormValues {
   email: string
@@ -118,7 +119,13 @@ export default function Login() {
         />
 
         <button type="submit" style={styles.boton}>
-          {cargando ? "Entrando..." : "Entrar"}
+          {cargando ? (
+            "Entrando..."
+          ) : (
+            <>
+              <IoLogInOutline style={{ marginRight: 4 }} /> Entrar
+            </>
+          )}
         </button>
       </form>
 

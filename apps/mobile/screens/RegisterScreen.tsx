@@ -14,6 +14,7 @@ import { ROUTES } from "../constants/routes"
 import { registrarUsuario } from "../services/api"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
+import { Ionicons } from "@expo/vector-icons"
 
 export default function RegisterScreen({ navigation }: any) {
   const { tema } = useContext(ThemeContext)
@@ -95,7 +96,9 @@ export default function RegisterScreen({ navigation }: any) {
           onPress={registrar}
           disabled={cargando}
         >
-          <Text style={styles.botonTexto}>Registrarse</Text>
+          <Text style={styles.botonTexto}>
+            Registrarse <Ionicons name="person-add-outline" size={20} color="#fff" />
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate(ROUTES.LOGIN)}>
