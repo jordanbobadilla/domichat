@@ -1,0 +1,17 @@
+<svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bubble 1: Azul -->
+  <g>
+    <rect x="20" y="20" rx="20" ry="20" width="90" height="60" fill="#0057A5" />
+    <circle cx="45" cy="50" r="5" fill="white" />
+    <circle cx="65" cy="50" r="5" fill="white" />
+    <circle cx="85" cy="50" r="5" fill="white" />
+  </g>
+
+  <!-- Bubble 2: Roja (superpuesta abajo a la derecha) -->
+  <g>
+    <rect x="40" y="60" rx="20" ry="20" width="90" height="60" fill="#FF3E3E" />
+    <circle cx="65" cy="90" r="5" fill="white" />
+    <circle cx="85" cy="90" r="5" fill="white" />
+    <circle cx="105" cy="90" r="5" fill="white" />
+  </g>
+</svg>
