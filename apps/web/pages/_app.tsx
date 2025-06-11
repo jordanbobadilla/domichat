@@ -13,7 +13,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     const handleResize = () => {
       const mobile = window.innerWidth < 768
       setIsMobile(mobile)
-      if (!mobile) setSidebarOpen(true)
+      if (mobile) {
+        setSidebarOpen(false)
+      } else {
+        setSidebarOpen(true)
+      }
     }
     handleResize()
     window.addEventListener("resize", handleResize)
