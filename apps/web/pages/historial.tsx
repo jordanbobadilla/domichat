@@ -4,10 +4,7 @@ import axios from "axios"
 import { temas } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
 import { ThemeContext } from "../context/ThemeContext"
-import {
-  IoPencilOutline,
-  IoTrashOutline,
-} from "react-icons/io5"
+import { IoPencilOutline, IoTrashOutline } from "react-icons/io5"
 
 interface Mensaje {
   mensaje: string
@@ -25,8 +22,16 @@ interface HistItem {
 export default function Historial() {
   const [items, setItems] = useState<HistItem[]>([])
   const { tema } = useContext(ThemeContext)
+  const [isMobile, setIsMobile] = useState(true)
   const router = useRouter()
   const colors = temas[tema]
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   useEffect(() => {
     const sesion = verificarSesion()
@@ -117,6 +122,7 @@ export default function Historial() {
       color: colors.primario,
       fontWeight: 700,
       marginBottom: 20,
+      paddingLeft: isMobile ? 64 : 0,
     },
     card: {
       backgroundColor: colors.input,
@@ -174,7 +180,7 @@ export default function Historial() {
                   <div style={styles.info}>
                     <p style={styles.tituloChat}>{item.titulo}</p>
                     <p style={styles.fecha}>
-                      {new Date(item.fecha).toLocaleDateString()} {" "}
+                      {new Date(item.fecha).toLocaleDateString()}{" "}
                       {new Date(item.fecha).toLocaleTimeString()}
                     </p>
                   </div>

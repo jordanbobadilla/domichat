@@ -126,7 +126,7 @@ export default function Sidebar({
           <IoChatbubbleEllipsesOutline
             style={{ marginRight: 6, verticalAlign: "middle" }}
           />
-          Nuevo chat
+          Chat
         </Link>
         <Link href="/historial" style={styles.link}>
           <IoTimeOutline style={{ marginRight: 6, verticalAlign: "middle" }} />
