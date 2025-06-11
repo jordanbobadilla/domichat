@@ -5,6 +5,7 @@ import { useState, useContext } from "react"
 import { temas } from "../constants/colors"
 import { ThemeContext } from "../context/ThemeContext"
 import { IoLogInOutline } from "react-icons/io5"
+import Image from "next/image"
 
 interface FormValues {
   email: string
@@ -100,6 +101,13 @@ export default function Login() {
 
   return (
     <div style={styles.wrapper}>
+      <Image
+        src="/domichat-logo.svg"
+        width={120}
+        height={120}
+        alt="DomiChat logo"
+        style={{ display: "block", margin: "0 auto 20px" }}
+      />
       <h2 style={styles.titulo}>Iniciar sesión</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} style={styles.form}>

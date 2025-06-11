@@ -69,7 +69,7 @@ export default function Home() {
 
   return (
     <div style={styles.container}>
-      <Image src="/logo.png" width={160} height={160} alt="DomiChat logo" />
+      <Image src="/domichat-logo.svg" width={160} height={160} alt="DomiChat logo" />
       <h1 style={styles.titulo}>Bienvenido a DomiChat</h1>
       <p style={styles.subtitulo}>
         Tu asistente dominicano 🇩🇴 donde y cuando lo necesites

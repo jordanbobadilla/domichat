@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
 import { ThemeContext } from "../context/ThemeContext"
 import { temas } from "../constants/colors"
+import Image from "next/image"
 import {
   IoChatbubbleEllipsesOutline,
   IoTimeOutline,
@@ -55,6 +56,10 @@ export default function Sidebar() {
       padding: "8px 12px",
       borderRadius: 6,
     },
+    logo: {
+      display: "block",
+      margin: "0 auto 20px",
+    },
     bottom: {
       display: "flex",
       flexDirection: "column",
@@ -77,6 +82,13 @@ export default function Sidebar() {
 
   return (
     <aside style={styles.sidebar}>
+      <Image
+        src="/domichat-logo.svg"
+        width={120}
+        height={120}
+        alt="DomiChat logo"
+        style={styles.logo}
+      />
       <nav style={styles.nav}>
         <Link href="/chat" style={styles.link}>
           <IoChatbubbleEllipsesOutline
