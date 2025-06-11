@@ -1,5 +1,4 @@
 import { useEffect, useState, useContext } from "react"
-import Header from "@/components/Header"
 import { temas } from "../constants/colors"
 import { ThemeContext } from "../context/ThemeContext"
 
@@ -38,7 +37,7 @@ export default function Configuracion() {
     wrapper: {
       maxWidth: 500,
       margin: "auto",
-      paddingTop: 70,
+      paddingTop: 24,
       paddingLeft: 16,
       paddingRight: 16,
       backgroundColor: colors.fondo,

@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext } from "react"
 import { useRouter } from "next/router"
 import axios from "axios"
-import Header from "../components/Header"
 import { temas } from "../constants/colors"
 import { verificarSesion } from "../services/auth"
 import { ThemeContext } from "../context/ThemeContext"
@@ -105,7 +104,7 @@ export default function Historial() {
     wrapper: {
       maxWidth: 800,
       margin: "auto",
-      paddingTop: 70,
+      paddingTop: 24,
       paddingLeft: 16,
       paddingRight: 16,
       backgroundColor: colors.fondo,

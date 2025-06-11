@@ -3,7 +3,6 @@ import axios from "axios"
 import { useRouter } from "next/router"
 import { verificarSesion } from "../services/auth"
 import { temas } from "../constants/colors"
-import Header from "@/components/Header"
 import { ThemeContext } from "../context/ThemeContext"
 
 interface EstadoSuscripcion {
@@ -45,7 +44,7 @@ export default function Perfil() {
     wrapper: {
       maxWidth: 400,
       margin: "auto",
-      paddingTop: 70,
+      paddingTop: 24,
       paddingLeft: 16,
       paddingRight: 16,
       textAlign: "center",
