@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
-    "build": "tsc",
-    "target": "ES2020",
-    "module": "commonjs",
-    "rootDir": "./",
-    "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true
-  }
+    "target": "ES2020", // Buen soporte moderno
+    "module": "CommonJS", // Para Node.js
+    "outDir": "dist", // Carpeta de salida de los JS compilados
+    "rootDir": ".", // Parte desde la raíz
+    "strict": true, // Verificaciones estrictas
+    "esModuleInterop": true, // Permite importar libs CommonJS
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true, // Omite revisión de types externos
+    "moduleResolution": "node", // Resolución basada en node_modules
+    "resolveJsonModule": true // Para importar archivos .json si lo necesitas
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
