@@ -26,7 +26,7 @@ export default function Perfil() {
     if (sesion.email) setEmail(sesion.email)
 
     axios
-      .get("http://localhost:4000/api/subscription/estado", {
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/subscription/estado`, {
         headers: { Authorization: `Bearer ${sesion.token}` },
       })
       .then((res) => setEstado(res.data))

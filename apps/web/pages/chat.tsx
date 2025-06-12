@@ -64,14 +64,14 @@ export default function Chat() {
 
     if (!historialQuery && !mensajePrevio && !respuestaPrevio) {
       axios
-        .get("http://localhost:4000/api/chat/activo", {
+        .get(`${process.env.NEXT_PUBLIC_API_URL}/chat/activo`, {
           headers: { Authorization: `Bearer ${sesion.token}` },
         })
         .then((r) => setHistorial(r.data))
         .catch(() => {})
 
       const ev = new EventSource(
-        `http://localhost:4000/api/chat/stream?token=${sesion.token}`
+        `${process.env.NEXT_PUBLIC_API_URL}/chat/stream?token=${sesion.token}`
       )
       ev.onmessage = (e) => {
         const data = JSON.parse(e.data)
@@ -151,7 +151,7 @@ export default function Chat() {
     setCargando(true)
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/chat",
+        `${process.env.NEXT_PUBLIC_API_URL}/chat`,
         { mensaje: mensajeActual },
         { headers: { Authorization: `Bearer ${token}` } }
       )

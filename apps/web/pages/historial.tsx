@@ -38,7 +38,7 @@ export default function Historial() {
     if (!sesion) return
 
     axios
-      .get("http://localhost:4000/api/chat/historial", {
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/chat/historial`, {
         headers: { Authorization: `Bearer ${sesion.token}` },
       })
       .then((res) => setItems(res.data))
@@ -63,7 +63,7 @@ export default function Historial() {
       if (!sesion) return
 
       await axios.put(
-        `http://localhost:4000/api/chat/historial/${item.id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/chat/historial/${item.id}`,
         { nuevoTitulo: nuevo },
         { headers: { Authorization: `Bearer ${sesion.token}` } }
       )
@@ -83,9 +83,12 @@ export default function Historial() {
       const sesion = verificarSesion()
       if (!sesion) return
 
-      await axios.delete(`http://localhost:4000/api/chat/historial/${id}`, {
-        headers: { Authorization: `Bearer ${sesion.token}` },
-      })
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/chat/historial/${id}`,
+        {
+          headers: { Authorization: `Bearer ${sesion.token}` },
+        }
+      )
 
       setItems((prev) => prev.filter((i) => i.id !== id))
     } catch (err) {
@@ -100,9 +103,12 @@ export default function Historial() {
       const sesion = verificarSesion()
       if (!sesion) return
 
-      await axios.delete("http://localhost:4000/api/chat/historial/todo", {
-        headers: { Authorization: `Bearer ${sesion.token}` },
-      })
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/chat/historial/todo`,
+        {
+          headers: { Authorization: `Bearer ${sesion.token}` },
+        }
+      )
       setItems([])
     } catch (err) {
       console.error(err)

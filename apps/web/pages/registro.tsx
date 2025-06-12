@@ -27,7 +27,7 @@ export default function Registro() {
 
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/auth/registro",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/registro`,
         data
       )
       const { token, usuario } = res.data
