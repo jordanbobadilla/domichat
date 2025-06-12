@@ -15,7 +15,7 @@ export default function VerDataset() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/dataset/listar")
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/dataset/listar`)
       .then((res) => setEntradas(res.data))
       .catch(() => {})
   }, [])

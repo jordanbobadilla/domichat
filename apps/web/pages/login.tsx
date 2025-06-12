@@ -25,7 +25,10 @@ export default function Login() {
     setCargando(true)
 
     try {
-      const res = await axios.post("http://localhost:4000/api/auth/login", data) // Reemplaza si usas ngrok
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        data
+      ) // Reemplaza si usas ngrok
       const { token, usuario } = res.data
 
       // Guardar en localStorage

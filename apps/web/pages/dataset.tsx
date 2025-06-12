@@ -18,7 +18,7 @@ export default function DatasetForm() {
   const agregarEntrada = async () => {
     if (!pregunta || !respuesta) return
 
-    await axios.post("http://localhost:4000/api/dataset/agregar", {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/dataset/agregar`, {
       pregunta,
       respuesta,
     })

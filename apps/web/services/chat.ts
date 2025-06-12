@@ -17,7 +17,11 @@ export async function guardarHistorial(
 ) {
   const titulo = generarTitulo(mensajes.map((m) => ({ rol: "usuario", texto: m.mensaje })))
   const data = { titulo, fecha: new Date().toISOString(), mensajes }
-  await axios.post("http://localhost:4000/api/chat/historial", data, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
+  await axios.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/chat/historial`,
+    data,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  )
 }
